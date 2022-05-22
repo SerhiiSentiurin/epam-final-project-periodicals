@@ -1,0 +1,4 @@
+db.url: jdbc:mysql://localhost:3306/periodicals?createDatabaseIfNotExist=true
+db.username: user
+db.password: pass
+change_log_file: /db/liquibase/changelog-master.yaml
