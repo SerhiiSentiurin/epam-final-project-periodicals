@@ -18,7 +18,5 @@ public class ConfigureDataSource {
         log.info("Set userPassword - " + configLoader.getConfigs().get("db.password"));
 
         return new HikariDataSource(hikariConfig);
-
-
     }
 }

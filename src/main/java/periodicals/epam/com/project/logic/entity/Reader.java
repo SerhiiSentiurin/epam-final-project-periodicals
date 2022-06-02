@@ -10,6 +10,5 @@ import java.util.List;
 public class Reader extends User {
     private Account account; //cчёт
     private List<Periodical> periodicals;
-    private boolean registered;
     private boolean lock;
 }

@@ -1,5 +1,6 @@
 package periodicals.epam.com.project.infrastructure.web;
 
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import periodicals.epam.com.project.infrastructure.web.exception.ExceptionHandler;
+
 
 import java.io.IOException;
 

@@ -18,13 +18,9 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: registered
-                  type: BOOLEAN
-                  constraints:
-                    nullable: false
-              - column:
                   name: lock
                   type: BOOLEAN
+                  defaultValue: false
                   constraints:
                     nullable: false
         - addForeignKeyConstraint:
