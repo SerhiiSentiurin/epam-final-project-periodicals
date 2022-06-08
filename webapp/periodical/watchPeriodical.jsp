@@ -45,6 +45,7 @@
          <form action = "/app/periodicals/periodical/sortByCost" method ="GET">
             <label for="name">Sort periodicals by cost:</label><br>
             <input type = "hidden" name="topic" value = "${topic}"/>
+            <input type = "hidden" name="name" value = "${name}"/>
             <input type = "submit" value ='Sort'>
             <input type = "submit" formaction="/app/periodicals/periodical/reversedSortByCost" value='Reverse Sort'>
          </form>
@@ -52,6 +53,7 @@
          <form action ="/app/periodicals/periodical/sortByName" method = "GET">
             <label for="name">Sort periodicals by name:</label><br>
             <input type = "hidden" name="topic" value = "${topic}"/>
+            <input type = "hidden" name="name" value = "${name}"/>
             <input type = "submit" value ='Sort'>
             <input type = "submit" formaction="/app/periodicals/periodical/reversedSortByName" value='Reverse Sort'>
          </form>

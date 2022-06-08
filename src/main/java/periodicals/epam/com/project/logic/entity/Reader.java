@@ -11,4 +11,8 @@ public class Reader extends User {
     private Account account; //cчёт
     private List<Periodical> periodicals;
     private boolean lock;
+
+    public Reader() {
+        this.setUserRole(UserRole.READER);
+    }
 }

@@ -20,38 +20,66 @@ public class PeriodicalService {
         return periodicalDAO.getPeriodicalsByTopic(topic);
     }
 
-    public List<Periodical> getPeriodicalByName(String name){
+    public List<Periodical> getPeriodicalByName(String name) {
         return periodicalDAO.getPeriodicalByName(name);
     }
 
-    public List<Periodical> sortPeriodicalsByCost(){
+    public List<Periodical> sortPeriodicalsByCost() {
         return periodicalDAO.getAllPeriodicals().stream().sorted(Comparator.comparing(Periodical::getCost)).collect(Collectors.toList());
     }
 
-    public List<Periodical> reversedSortPeriodicalsByCost(){
+    public List<Periodical> reversedSortPeriodicalsByCost() {
         return periodicalDAO.getAllPeriodicals().stream().sorted(Comparator.comparing(Periodical::getCost).reversed()).collect(Collectors.toList());
     }
 
-    public List<Periodical> sortPeriodicalsByName(){
+    public List<Periodical> sortPeriodicalsByName() {
         return periodicalDAO.getAllPeriodicals().stream().sorted(Comparator.comparing(Periodical::getName)).collect(Collectors.toList());
     }
 
-    public List<Periodical> reversedSortPeriodicalsByName(){
+    public List<Periodical> reversedSortPeriodicalsByName() {
         return periodicalDAO.getAllPeriodicals().stream().sorted(Comparator.comparing(Periodical::getName).reversed()).collect(Collectors.toList());
     }
 
     public List<Periodical> sortPeriodicalsByCostByTopic(String topic) {
         return periodicalDAO.getPeriodicalsByTopic(topic).stream().sorted(Comparator.comparing(Periodical::getCost)).collect(Collectors.toList());
     }
-    public List<Periodical> reversedSortPeriodicalsByCostByTopic(String topic){
+
+    public List<Periodical> reversedSortPeriodicalsByCostByTopic(String topic) {
         return periodicalDAO.getPeriodicalsByTopic(topic).stream().sorted(Comparator.comparing(Periodical::getCost).reversed()).collect(Collectors.toList());
     }
-    public List<Periodical> sortPeriodicalsByNameByTopic(String topic){
+
+    public List<Periodical> sortPeriodicalsByNameByTopic(String topic) {
         return periodicalDAO.getPeriodicalsByTopic(topic).stream().sorted(Comparator.comparing(Periodical::getName)).collect(Collectors.toList());
     }
-    public List<Periodical> reversedSortPeriodicalsByNameByTopic(String topic){
+
+    public List<Periodical> reversedSortPeriodicalsByNameByTopic(String topic) {
         return periodicalDAO.getPeriodicalsByTopic(topic).stream().sorted(Comparator.comparing(Periodical::getName).reversed()).collect(Collectors.toList());
     }
+
+    public List<Periodical> sortPeriodicalsByCostByName(String name) {
+        return periodicalDAO.getPeriodicalByName(name).stream().sorted(Comparator.comparing(Periodical::getCost)).collect(Collectors.toList());
+    }
+
+    public List<Periodical> reversedSortPeriodicalsByCostByName(String name){
+        return periodicalDAO.getPeriodicalByName(name).stream().sorted(Comparator.comparing(Periodical::getCost).reversed()).collect(Collectors.toList());
+    }
+
+    public List<Periodical> sortPeriodicalsByNameByName(String name){
+        return periodicalDAO.getPeriodicalByName(name).stream().sorted(Comparator.comparing(Periodical::getName)).collect(Collectors.toList());
+    }
+
+    public List<Periodical> reversedSortPeriodicalsByNameByName(String name){
+        return periodicalDAO.getPeriodicalByName(name).stream().sorted(Comparator.comparing(Periodical::getName).reversed()).collect(Collectors.toList());
+    }
+
+    public List<Periodical> getPeriodicalsByReaderId(Long id) {
+        return periodicalDAO.getPeriodicalsByReaderId(id);
+    }
+
+    public List<Periodical> getPeriodicalsForSubscribing(Long id) {
+        return periodicalDAO.getPeriodicalsForSubscribing(id);
+    }
+
 }
 
 

@@ -1,5 +1,6 @@
 package periodicals.epam.com.project.logic.dao;
 
+import liquibase.pro.packaged.P;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import periodicals.epam.com.project.logic.entity.Periodical;
@@ -34,13 +35,6 @@ public class PeriodicalDAO {
                 Periodical periodical = new Periodical(id, name, topic, cost, description);
                 listOfPeriodicals.add(periodical);
 
-//                Periodical periodical = new Periodical();
-//                periodical.setId(resultSet.getLong("id"));
-//                periodical.setName(resultSet.getString("name"));
-//                periodical.setTopic(resultSet.getString("topic"));
-//                periodical.setCost(resultSet.getDouble("cost"));
-//                periodical.setDescription(resultSet.getString("description"));
-//                listOfPeriodicals.add(periodical);
             }
             return listOfPeriodicals;
         }
@@ -69,14 +63,37 @@ public class PeriodicalDAO {
 
     @SneakyThrows
     public List<Periodical> getPeriodicalByName(String name) {
-        String selectPeriodicalsByName = "SELECT * FROM periodical WHERE name = ?";
+//        String selectPeriodicalsByName = "SELECT * FROM periodical WHERE name = ?";
+        String selectPeriodicalsByName = "SELECT * FROM periodical WHERE name LIKE ?";
         List<Periodical> periodicals = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(selectPeriodicalsByName)) {
-            preparedStatement.setString(1, name);
+            preparedStatement.setString(1, "%"+name+"%");
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
                     long id = resultSet.getLong("id");
+                    String name1 = resultSet.getString("name");
+                    String topic = resultSet.getString("topic");
+                    double cost = resultSet.getDouble("cost");
+                    String description = resultSet.getString("description");
+                    Periodical periodical = new Periodical(id, name1, topic, cost, description);
+                    periodicals.add(periodical);
+                }
+            }
+        }
+        return periodicals;
+    }
+
+    @SneakyThrows
+    public List<Periodical> getPeriodicalsByReaderId(Long id) {
+        String selectPeriodicalsByReaderId = "SELECT * FROM periodical join periodicals ON periodical.id = periodicals.periodical_id where reader_id = ?;";
+        List<Periodical> periodicals = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(selectPeriodicalsByReaderId)) {
+            preparedStatement.setLong(1, id);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    String name = resultSet.getString("name");
                     String topic = resultSet.getString("topic");
                     double cost = resultSet.getDouble("cost");
                     String description = resultSet.getString("description");
@@ -88,13 +105,29 @@ public class PeriodicalDAO {
         return periodicals;
     }
 
-    public List<Periodical> getPeriodicalsByReaderId(Long id) {
-        String selectPeriodicalsByReaderId = "SELECT * FROM periodical join periodicals ON periodical.id = periodicals.periodical_id where reader_id = ?;";
+    @SneakyThrows
+    public List<Periodical> getPeriodicalsForSubscribing(Long id) {
+        String sql = "SELECT * FROM periodical join periodicals ON periodical.id = periodicals.periodical_id where reader_id <> ?;";
         List<Periodical> periodicals = new ArrayList<>();
-
-
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setLong(1, id);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    String name = resultSet.getString("name");
+                    String topic = resultSet.getString("topic");
+                    double cost = resultSet.getDouble("cost");
+                    String description = resultSet.getString("description");
+                    Periodical periodical = new Periodical(id, name, topic, cost, description);
+                    periodicals.add(periodical);
+                }
+            }
+        }
         return periodicals;
     }
+
+
+
 
 
 }

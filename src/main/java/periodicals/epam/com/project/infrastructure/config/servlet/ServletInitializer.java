@@ -63,17 +63,24 @@ public class ServletInitializer implements ServletContainerInitializer {
         UserController userController = createUserController(queryParameterHandler, dataSource);
         placeholders.add(new Placeholder("POST", "login", userController::login));
 
-        ReaderController readerController = createReaderController(queryParameterHandler,dataSource);
-        placeholders.add(new Placeholder("POST","reader/create",readerController::createReader));
+        PeriodicalService periodicalService = getPeriodicalService(dataSource);
+        ReaderService readerService = getReaderService(dataSource);
+        ReaderController readerController = createReaderController(queryParameterHandler, periodicalService, readerService);
+        placeholders.add(new Placeholder("POST", "reader/create", readerController::createReader));
+        placeholders.add(new Placeholder("POST", "reader/addSubscribing", readerController::addSubscribing));
+        placeholders.add(new Placeholder("GET", "reader", readerController::getReaderById));
 
-        PeriodicalController periodicalController = createPeriodicalController(queryParameterHandler,dataSource);
-        placeholders.add(new Placeholder("GET","periodical/watch",periodicalController::getAllPeriodical));
-        placeholders.add(new Placeholder("GET","periodical/watchByTopic",periodicalController::getPeriodicalsByTopic));
-        placeholders.add(new Placeholder("GET","periodical/findByName",periodicalController::findPeriodicalByName));
-        placeholders.add(new Placeholder("GET","periodical/sortByCost", periodicalController::sortPeriodicalsByCost));
-        placeholders.add(new Placeholder("GET","periodical/reversedSortByCost", periodicalController::reversedSortPeriodicalsByCost));
-        placeholders.add(new Placeholder("GET","periodical/sortByName", periodicalController::sortPeriodicalsByName));
-        placeholders.add(new Placeholder("GET","periodical/reversedSortByName", periodicalController::reversedSortPeriodicalsByName));
+        PeriodicalController periodicalController = createPeriodicalController(queryParameterHandler, periodicalService);
+        placeholders.add(new Placeholder("GET", "periodical/watch", periodicalController::getAllPeriodical));
+        placeholders.add(new Placeholder("GET", "periodical/watchByTopic", periodicalController::getPeriodicalsByTopic));
+        placeholders.add(new Placeholder("GET", "periodical/findByName", periodicalController::findPeriodicalByName));
+        placeholders.add(new Placeholder("GET", "periodical/sortByCost", periodicalController::sortPeriodicalsByCost));
+        placeholders.add(new Placeholder("GET", "periodical/reversedSortByCost", periodicalController::reversedSortPeriodicalsByCost));
+        placeholders.add(new Placeholder("GET", "periodical/sortByName", periodicalController::sortPeriodicalsByName));
+        placeholders.add(new Placeholder("GET", "periodical/reversedSortByName", periodicalController::reversedSortPeriodicalsByName));
+        placeholders.add(new Placeholder("GET", "reader/periodicalsForSubscribing", periodicalController::getPeriodicalsForSubscribing));
+        placeholders.add(new Placeholder("GET", "reader/readerSubscriptions", periodicalController::getPeriodicalsByReaderId));
+
         return new DispatcherRequest(placeholders);
     }
 
@@ -84,15 +91,21 @@ public class ServletInitializer implements ServletContainerInitializer {
         return new UserController(userService, queryParameterHandler, mapView);
     }
 
-    private ReaderController createReaderController(QueryParameterHandler queryParameterHandler, DataSource dataSource){
-        ReaderDAO readerDAO = new ReaderDAO(dataSource);
-        ReaderService readerService = new ReaderService(readerDAO);
-        return new ReaderController(readerService,queryParameterHandler);
+    private ReaderController createReaderController(QueryParameterHandler queryParameterHandler, PeriodicalService periodicalService, ReaderService readerService) {
+        return new ReaderController(readerService, periodicalService, queryParameterHandler);
     }
 
-    private PeriodicalController createPeriodicalController(QueryParameterHandler queryParameterHandler, DataSource dataSource){
+    private PeriodicalController createPeriodicalController(QueryParameterHandler queryParameterHandler, PeriodicalService periodicalService) {
+        return new PeriodicalController(periodicalService, queryParameterHandler);
+    }
+
+    private PeriodicalService getPeriodicalService(DataSource dataSource) {
         PeriodicalDAO periodicalDAO = new PeriodicalDAO(dataSource);
-        PeriodicalService periodicalService = new PeriodicalService(periodicalDAO);
-        return new PeriodicalController(periodicalService,queryParameterHandler);
+        return new PeriodicalService(periodicalDAO);
+    }
+
+    private ReaderService getReaderService(DataSource dataSource) {
+        ReaderDAO readerDAO = new ReaderDAO(dataSource);
+        return new ReaderService(readerDAO);
     }
 }
