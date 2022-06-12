@@ -120,18 +120,19 @@ public class PeriodicalController {
 
     public ModelAndView getPeriodicalsByReaderId(HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView();
-        long id = Long.parseLong(request.getParameter("id"));
-        List<Periodical> subscribedPeriodicals = periodicalService.getPeriodicalsByReaderId(id);
+        long readerId = Long.parseLong(request.getParameter("readerId"));
+        List<Periodical> subscribedPeriodicals = periodicalService.getPeriodicalsByReaderId(readerId);
         modelAndView.addAttribute("periodicals", subscribedPeriodicals);
-        modelAndView.setView("/reader/readerHome.jsp");
+        modelAndView.setView("/periodical/watchSubscriptions.jsp");
         return modelAndView;
     }
 
     public ModelAndView getPeriodicalsForSubscribing(HttpServletRequest request) {
         long readerId = Long.parseLong(request.getParameter("readerId"));
+        List<Periodical> periodicalsForSubscribing = periodicalService.getPeriodicalsForSubscribing(readerId);
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addAttribute("periodicals", periodicalService.getPeriodicalsForSubscribing(readerId));
-        modelAndView.setView("/reader/periodicalsForSubscribing.jsp");
+        modelAndView.addAttribute("periodicals", periodicalsForSubscribing);
+        modelAndView.setView("/periodical/periodicalsForSubscribing.jsp");
         return modelAndView;
     }
 }

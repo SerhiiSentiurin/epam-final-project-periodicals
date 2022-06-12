@@ -72,12 +72,13 @@ public class PeriodicalService {
         return periodicalDAO.getPeriodicalByName(name).stream().sorted(Comparator.comparing(Periodical::getName).reversed()).collect(Collectors.toList());
     }
 
-    public List<Periodical> getPeriodicalsByReaderId(Long id) {
-        return periodicalDAO.getPeriodicalsByReaderId(id);
+    public List<Periodical> getPeriodicalsByReaderId(Long readerId) {
+        return periodicalDAO.getPeriodicalsByReaderId(readerId);
     }
 
-    public List<Periodical> getPeriodicalsForSubscribing(Long id) {
-        return periodicalDAO.getPeriodicalsForSubscribing(id);
+    public List<Periodical> getPeriodicalsForSubscribing(Long readerId) {
+        final List<Long> periodicalIdByReaderId = periodicalDAO.getPeriodicalIdByReaderId(readerId);
+        return periodicalDAO.getPeriodicalsForSubscribing(periodicalIdByReaderId);
     }
 
 }

@@ -2,7 +2,7 @@
 <!DOCTYPE html>
  <html>
      <head>
-         <title>get all subscribers</title>
+         <title>Watch all periodicals</title>
          <meta charset="UTF-8">
      </head>
      <body>

@@ -23,7 +23,7 @@ public class ReaderService {
         return readerDAO.getReaderById(id).orElseThrow(() -> new ReaderException("can't find reader"));
     }
 
-    public AccountDTO addSubscribing(AccountDTO accountDTO){
+    public AccountDTO addSubscription(AccountDTO accountDTO){
         return readerDAO.addSubscription(accountDTO);
 
     }

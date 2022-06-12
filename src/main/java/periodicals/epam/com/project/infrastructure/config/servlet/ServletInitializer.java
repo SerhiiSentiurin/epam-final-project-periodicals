@@ -65,12 +65,12 @@ public class ServletInitializer implements ServletContainerInitializer {
 
         PeriodicalService periodicalService = getPeriodicalService(dataSource);
         ReaderService readerService = getReaderService(dataSource);
-        ReaderController readerController = createReaderController(queryParameterHandler, periodicalService, readerService);
-        placeholders.add(new Placeholder("POST", "reader/create", readerController::createReader));
-        placeholders.add(new Placeholder("POST", "reader/addSubscribing", readerController::addSubscribing));
-        placeholders.add(new Placeholder("GET", "reader", readerController::getReaderById));
 
         PeriodicalController periodicalController = createPeriodicalController(queryParameterHandler, periodicalService);
+        ReaderController readerController = createReaderController(queryParameterHandler, periodicalService, readerService);
+        placeholders.add(new Placeholder("POST", "reader/create", readerController::createReader));
+        placeholders.add(new Placeholder("POST", "reader/addSubscribing", readerController::addSubscription));
+        placeholders.add(new Placeholder("GET", "reader", readerController::getReaderById));
         placeholders.add(new Placeholder("GET", "periodical/watch", periodicalController::getAllPeriodical));
         placeholders.add(new Placeholder("GET", "periodical/watchByTopic", periodicalController::getPeriodicalsByTopic));
         placeholders.add(new Placeholder("GET", "periodical/findByName", periodicalController::findPeriodicalByName));
@@ -78,8 +78,8 @@ public class ServletInitializer implements ServletContainerInitializer {
         placeholders.add(new Placeholder("GET", "periodical/reversedSortByCost", periodicalController::reversedSortPeriodicalsByCost));
         placeholders.add(new Placeholder("GET", "periodical/sortByName", periodicalController::sortPeriodicalsByName));
         placeholders.add(new Placeholder("GET", "periodical/reversedSortByName", periodicalController::reversedSortPeriodicalsByName));
-        placeholders.add(new Placeholder("GET", "reader/periodicalsForSubscribing", periodicalController::getPeriodicalsForSubscribing));
-        placeholders.add(new Placeholder("GET", "reader/readerSubscriptions", periodicalController::getPeriodicalsByReaderId));
+        placeholders.add(new Placeholder("GET", "periodical/periodicalsForSubscribing", periodicalController::getPeriodicalsForSubscribing));
+        placeholders.add(new Placeholder("GET", "periodical/readerSubscriptions", periodicalController::getPeriodicalsByReaderId));
 
         return new DispatcherRequest(placeholders);
     }

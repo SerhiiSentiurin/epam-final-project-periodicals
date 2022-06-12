@@ -94,10 +94,7 @@ public class ReaderDAO {
 
 
     public AccountDTO addSubscription(AccountDTO dto) {
-//        String selectCost = "SELECT cost FROM periodical WHERE id = ? ";         //id = periodicalId
-//        String selectAccountAmount = "SELECT amount FROM account WHERE id = ?";      //id = accountId = readerId
         String addSubscription = "INSERT INTO periodicals (reader_id, periodical_id) VALUES (?,?)";
-        //String updateAccount = "UPDATE account SET amount = ? WHERE id =" + dto.getId();
         String updateAccount = "update account inner join reader on account.id = reader.account_id set account.amount = ? where reader.id = " + dto.getReaderId() + ";";
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -107,6 +104,7 @@ public class ReaderDAO {
             throw new ReaderException("Not enough money on the account");
         } else {
             dto.setAmountOfMoney(getAmountFromAccount(dto.getReaderId()) - getPeriodicalCost(dto.getPeriodicalId()));
+        }
             try {
                 connection = dataSource.getConnection();
                 connection.setAutoCommit(false);
@@ -128,7 +126,7 @@ public class ReaderDAO {
                 close(preparedStatement);
                 close(connection);
             }
-        }
+
     }
 
     @SneakyThrows
@@ -149,14 +147,16 @@ public class ReaderDAO {
 
     @SneakyThrows
     private Double getAmountFromAccount(Long readerId) {
-        String selectAccountAmount = "SELECT amount FROM account WHERE id = ?";
+        String selectAccountAmount = "select account.id, amount from account join reader on reader.account_id = account.id where reader.id = ?";
         Account readerAccount = new Account();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(selectAccountAmount)) {
             preparedStatement.setLong(1, readerId);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
+                long accId = resultSet.getLong("id");
                 double amount = resultSet.getDouble("amount");
+                readerAccount.setId(accId);
                 readerAccount.setAmountOfMoney(amount);
             }
         }
