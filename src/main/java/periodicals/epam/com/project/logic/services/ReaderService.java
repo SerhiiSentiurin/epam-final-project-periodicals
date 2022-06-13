@@ -25,7 +25,10 @@ public class ReaderService {
 
     public AccountDTO addSubscription(AccountDTO accountDTO){
         return readerDAO.addSubscription(accountDTO);
+    }
 
+    public boolean updateAccountAmount(AccountDTO accountDTO){
+        return readerDAO.updateAccount(accountDTO);
     }
 
 

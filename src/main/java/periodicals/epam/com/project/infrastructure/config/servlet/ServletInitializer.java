@@ -80,7 +80,7 @@ public class ServletInitializer implements ServletContainerInitializer {
         placeholders.add(new Placeholder("GET", "periodical/reversedSortByName", periodicalController::reversedSortPeriodicalsByName));
         placeholders.add(new Placeholder("GET", "periodical/periodicalsForSubscribing", periodicalController::getPeriodicalsForSubscribing));
         placeholders.add(new Placeholder("GET", "periodical/readerSubscriptions", periodicalController::getPeriodicalsByReaderId));
-
+        placeholders.add(new Placeholder("POST", "updateAccount", readerController::updateAccount));
         return new DispatcherRequest(placeholders);
     }
 

@@ -92,6 +92,16 @@ public class ReaderDAO {
         return readerCreateDTO;
     }
 
+    @SneakyThrows
+    public boolean updateAccount(AccountDTO dto) {
+        String sql = "update account inner join reader on account.id = reader.account_id set account.amount = ? where reader.id = ?";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setDouble(1, dto.getAmountOfMoney());
+            preparedStatement.setLong(2, dto.getReaderId());
+            return preparedStatement.execute();
+        }
+    }
 
     public AccountDTO addSubscription(AccountDTO dto) {
         String addSubscription = "INSERT INTO periodicals (reader_id, periodical_id) VALUES (?,?)";
@@ -105,28 +115,27 @@ public class ReaderDAO {
         } else {
             dto.setAmountOfMoney(getAmountFromAccount(dto.getReaderId()) - getPeriodicalCost(dto.getPeriodicalId()));
         }
-            try {
-                connection = dataSource.getConnection();
-                connection.setAutoCommit(false);
-                preparedStatement = connection.prepareStatement(addSubscription);
-                preparedStatement.setLong(1, dto.getReaderId());
-                preparedStatement.setLong(2, dto.getPeriodicalId());
-                preparedStatement.execute();
-                try (PreparedStatement preparedStatement1 = connection.prepareStatement(updateAccount)) {
-                    preparedStatement1.setDouble(1, dto.getAmountOfMoney());
-                    preparedStatement.execute();
-                    connection.commit();
-                    return dto;
-                }
-            } catch (Exception e) {
-                rollback(connection);
-                log.error(e.getMessage());
-                throw new ReaderException("Transaction failed with add subscription");
-            } finally {
-                close(preparedStatement);
-                close(connection);
+        try {
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+            preparedStatement = connection.prepareStatement(addSubscription);
+            preparedStatement.setLong(1, dto.getReaderId());
+            preparedStatement.setLong(2, dto.getPeriodicalId());
+            preparedStatement.execute();
+            try (PreparedStatement preparedStatement1 = connection.prepareStatement(updateAccount)) {
+                preparedStatement1.setDouble(1, dto.getAmountOfMoney());
+                preparedStatement1.execute();
+                connection.commit();
+                return dto;
             }
-
+        } catch (Exception e) {
+            rollback(connection);
+            log.error(e.getMessage());
+            throw new ReaderException("Transaction failed with add subscription");
+        } finally {
+            close(preparedStatement);
+            close(connection);
+        }
     }
 
     @SneakyThrows
@@ -138,7 +147,7 @@ public class ReaderDAO {
             preparedStatement.setLong(1, periodicalId);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                double cost = resultSet.getLong("cost");
+                double cost = resultSet.getDouble("cost");
                 periodical.setCost(cost);
             }
         }

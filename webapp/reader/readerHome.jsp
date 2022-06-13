@@ -29,7 +29,12 @@
                     <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
                     <input type = "submit" value ='Choose periodical'>
         </form>
-
+        <form action ="/app/periodicals/updateAccount" method = "POST">
+                    <label for="name">Update Account</label><br>
+                    <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
+                     <input type="number" name="amountOfMoney" required><br><br>
+                    <input type = "submit" value ='update'>
+        </form>
 
 
     </body>
