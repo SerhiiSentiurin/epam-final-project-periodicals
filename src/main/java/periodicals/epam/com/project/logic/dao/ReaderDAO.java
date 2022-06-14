@@ -1,8 +1,5 @@
 package periodicals.epam.com.project.logic.dao;
 
-import liquibase.pro.packaged.D;
-import liquibase.pro.packaged.O;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -92,16 +89,16 @@ public class ReaderDAO {
         return readerCreateDTO;
     }
 
-    @SneakyThrows
-    public boolean updateAccount(AccountDTO dto) {
-        String sql = "update account inner join reader on account.id = reader.account_id set account.amount = ? where reader.id = ?";
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setDouble(1, dto.getAmountOfMoney());
-            preparedStatement.setLong(2, dto.getReaderId());
-            return preparedStatement.execute();
-        }
-    }
+//    @SneakyThrows
+//    public boolean updateAccount(AccountDTO dto) {
+//        String sql = "update account inner join reader on account.id = reader.account_id set account.amount = ? where reader.id = ?";
+//        try (Connection connection = dataSource.getConnection();
+//             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+//            preparedStatement.setDouble(1, dto.getAmountOfMoney());
+//            preparedStatement.setLong(2, dto.getReaderId());
+//            return preparedStatement.execute();
+//        }
+//    }
 
     public AccountDTO addSubscription(AccountDTO dto) {
         String addSubscription = "INSERT INTO periodicals (reader_id, periodical_id) VALUES (?,?)";

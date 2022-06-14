@@ -1,3 +1,4 @@
+<%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
  <html>
@@ -6,24 +7,6 @@
          <meta charset="UTF-8">
      </head>
      <body>
-         <style>
-         caption {
-           font-family: annabelle;
-           font-weight: bold;
-           font-size: 1.5em;
-           padding: 10px;
-           border: 1px solid #A9E2CC;
-          }
-         th {
-           padding: 10px;
-           border: 1px solid #A9E2CC;
-         }
-         td {
-           font-size: 1.0em;
-           padding: 5px 7px;
-           border: 1px solid #A9E2CC;
-         }
-         </style>
 
          <form action = "/app/periodicals/periodical/watchByTopic" method = "GET">
           <label for="topic">Find periodical by topic:</label>
@@ -83,5 +66,24 @@
                 </tr>
             </c:forEach>
         </table>
+
+        <style>
+                 caption {
+                   font-family: annabelle;
+                   font-weight: bold;
+                   font-size: 1.5em;
+                   padding: 10px;
+                   border: 1px solid #A9E2CC;
+                  }
+                 th {
+                   padding: 10px;
+                   border: 1px solid #A9E2CC;
+                 }
+                 td {
+                   font-size: 1.0em;
+                   padding: 5px 7px;
+                   border: 1px solid #A9E2CC;
+                 }
+        </style>
     </body>
 </html>

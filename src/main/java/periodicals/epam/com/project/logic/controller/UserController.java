@@ -8,7 +8,7 @@ import periodicals.epam.com.project.infrastructure.web.ModelAndView;
 import periodicals.epam.com.project.infrastructure.web.QueryParameterHandler;
 import periodicals.epam.com.project.logic.entity.User;
 import periodicals.epam.com.project.logic.entity.UserRole;
-import periodicals.epam.com.project.logic.entity.dto.UserDto;
+import periodicals.epam.com.project.logic.entity.dto.UserDTO;
 import periodicals.epam.com.project.logic.services.UserService;
 
 import java.util.Map;
@@ -21,7 +21,7 @@ public class UserController {
     private final Map<UserRole, String> mapView;
 
     public ModelAndView login(HttpServletRequest request) {
-        UserDto userDto = queryParameterHandler.handleRequest(request, UserDto.class);
+        UserDTO userDto = queryParameterHandler.handleRequest(request, UserDTO.class);
         User userByLogin = userService.getUserByLogin(userDto);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setView(mapView.get(userByLogin.getUserRole()));

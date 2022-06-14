@@ -14,7 +14,7 @@ import java.sql.ResultSet;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class UserDao {
+public class UserDAO {
     private final DataSource dataSource;
 
     @SneakyThrows

@@ -7,18 +7,21 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRegistration;
 import lombok.extern.log4j.Log4j2;
+import periodicals.epam.com.project.logic.controller.AccountController;
 import periodicals.epam.com.project.logic.controller.PeriodicalController;
 import periodicals.epam.com.project.logic.controller.ReaderController;
 import periodicals.epam.com.project.logic.controller.UserController;
+import periodicals.epam.com.project.logic.dao.AccountDAO;
 import periodicals.epam.com.project.logic.dao.PeriodicalDAO;
 import periodicals.epam.com.project.logic.dao.ReaderDAO;
-import periodicals.epam.com.project.logic.dao.UserDao;
+import periodicals.epam.com.project.logic.dao.UserDAO;
 import periodicals.epam.com.project.infrastructure.config.ConfigLoader;
 import periodicals.epam.com.project.infrastructure.config.db.ConfigureDataSource;
 import periodicals.epam.com.project.infrastructure.config.db.ConfigureLiquibase;
 import periodicals.epam.com.project.infrastructure.web.*;
 import periodicals.epam.com.project.infrastructure.web.exception.ExceptionHandler;
 import periodicals.epam.com.project.logic.entity.UserRole;
+import periodicals.epam.com.project.logic.services.AccountService;
 import periodicals.epam.com.project.logic.services.PeriodicalService;
 import periodicals.epam.com.project.logic.services.ReaderService;
 import periodicals.epam.com.project.logic.services.UserService;
@@ -65,9 +68,12 @@ public class ServletInitializer implements ServletContainerInitializer {
 
         PeriodicalService periodicalService = getPeriodicalService(dataSource);
         ReaderService readerService = getReaderService(dataSource);
+        AccountService accountService = getAccountService(dataSource);
 
         PeriodicalController periodicalController = createPeriodicalController(queryParameterHandler, periodicalService);
         ReaderController readerController = createReaderController(queryParameterHandler, periodicalService, readerService);
+        AccountController accountController = createAccountController(queryParameterHandler,accountService);
+
         placeholders.add(new Placeholder("POST", "reader/create", readerController::createReader));
         placeholders.add(new Placeholder("POST", "reader/addSubscribing", readerController::addSubscription));
         placeholders.add(new Placeholder("GET", "reader", readerController::getReaderById));
@@ -80,13 +86,14 @@ public class ServletInitializer implements ServletContainerInitializer {
         placeholders.add(new Placeholder("GET", "periodical/reversedSortByName", periodicalController::reversedSortPeriodicalsByName));
         placeholders.add(new Placeholder("GET", "periodical/periodicalsForSubscribing", periodicalController::getPeriodicalsForSubscribing));
         placeholders.add(new Placeholder("GET", "periodical/readerSubscriptions", periodicalController::getPeriodicalsByReaderId));
-        placeholders.add(new Placeholder("POST", "updateAccount", readerController::updateAccount));
+        placeholders.add(new Placeholder("POST", "topUpAccountAmount", accountController::topUpAccountAmount));
+        placeholders.add(new Placeholder("GET", "account/getAccountInfo", accountController::getAmountOfMoneyByReaderId));
         return new DispatcherRequest(placeholders);
     }
 
     private UserController createUserController(QueryParameterHandler queryParameterHandler, DataSource dataSource) {
         Map<UserRole, String> mapView = Map.of(UserRole.ADMIN, "/admin/adminHome.jsp", UserRole.READER, "/reader/readerHome.jsp");
-        UserDao userDao = new UserDao(dataSource);
+        UserDAO userDao = new UserDAO(dataSource);
         UserService userService = new UserService(userDao);
         return new UserController(userService, queryParameterHandler, mapView);
     }
@@ -97,6 +104,15 @@ public class ServletInitializer implements ServletContainerInitializer {
 
     private PeriodicalController createPeriodicalController(QueryParameterHandler queryParameterHandler, PeriodicalService periodicalService) {
         return new PeriodicalController(periodicalService, queryParameterHandler);
+    }
+
+    private AccountController createAccountController(QueryParameterHandler queryParameterHandler, AccountService accountService){
+        return new AccountController(accountService,queryParameterHandler);
+    }
+
+    private AccountService getAccountService (DataSource dataSource){
+        AccountDAO accountDAO = new AccountDAO(dataSource);
+        return new AccountService(accountDAO);
     }
 
     private PeriodicalService getPeriodicalService(DataSource dataSource) {

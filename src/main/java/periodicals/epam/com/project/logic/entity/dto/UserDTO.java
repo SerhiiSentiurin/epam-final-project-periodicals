@@ -2,7 +2,7 @@ package periodicals.epam.com.project.logic.entity.dto;
 
 import lombok.Getter;
 
-public class UserDto {
+public class UserDTO {
     @Getter
     private String login;
     @Getter

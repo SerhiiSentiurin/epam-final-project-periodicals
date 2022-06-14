@@ -49,7 +49,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: amount
-                  type: BIGINT
+                  type: DECIMAL(19,2)
                   defaultValue: 0
                   constraints:
                     nullable: false

@@ -36,7 +36,7 @@
             </c:forEach>
         </table>
 
-        <button onclick="location.href='/app/reader/readerHome.jsp'"> Back </button>
+        <button onclick="location.href='/app/reader/readerHome.jsp'"> Back home </button>
 
         <style>
             caption {
