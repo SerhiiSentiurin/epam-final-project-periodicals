@@ -25,13 +25,40 @@
                 <th>Topic</th>
                 <th>Cost</th>
                 <th>Description</th>
+                <th>Start</th>
+                <th>End</th>
             </tr>
-            <c:forEach items="${periodicals}" var="periodical">
+            <c:forEach var="periodical" items="${periodicals}" >
                 <tr>
-                    <td>${periodical.name}</td>
-                    <td>${periodical.topic}</td>
-                    <td>${periodical.cost}</td>
-                    <td>${periodical.description}</td>
+                        <td><c:forEach var = "per" items = "${periodical.key}">
+                            ${per.name}
+                            </c:forEach>
+                        </td>
+
+                        <td><c:forEach var = "per" items = "${periodical.key}">
+                            ${per.topic}
+                            </c:forEach>
+                        </td>
+
+                        <td><c:forEach var = "per" items = "${periodical.key}">
+                            ${per.cost}
+                            </c:forEach>
+                        </td>
+
+                        <td><c:forEach var = "per" items = "${periodical.key}">
+                            ${per.description}
+                            </c:forEach>
+                        </td>
+
+                        <td><c:forEach var = "prepayment" items = "${periodical.value}">
+                            ${prepayment.startDate}
+                            </c:forEach>
+                        </td>
+                        <td><c:forEach var = "prepayment" items = "${periodical.value}">
+                            ${prepayment.dueDate}
+                            </c:forEach>
+                        </td>
+
                 </tr>
             </c:forEach>
         </table>

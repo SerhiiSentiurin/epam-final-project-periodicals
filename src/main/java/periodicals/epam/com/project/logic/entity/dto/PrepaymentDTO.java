@@ -7,8 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccountDTO {
-    private Double amountOfMoney;
+public class PrepaymentDTO {
+    private Integer durationOfSubscription;
     private Long readerId;
     private Long periodicalId;
+    private Double amountOfMoney;
 }

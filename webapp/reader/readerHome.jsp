@@ -12,12 +12,7 @@
          </jsp:text>
          <br><br>
 
-
-<br>
-состояние счёта + кнопка пополнить
-<br>
-кнопка посмотреть весь список чтоб подписаться
-<br><br>
+        <br><br>
 
         <form action ="/app/periodicals/periodical/readerSubscriptions" method = "GET">
                     <label for="name">Click to watch your subscriptions</label><br>

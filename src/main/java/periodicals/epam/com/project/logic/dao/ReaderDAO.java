@@ -89,85 +89,75 @@ public class ReaderDAO {
         return readerCreateDTO;
     }
 
-//    @SneakyThrows
-//    public boolean updateAccount(AccountDTO dto) {
-//        String sql = "update account inner join reader on account.id = reader.account_id set account.amount = ? where reader.id = ?";
-//        try (Connection connection = dataSource.getConnection();
-//             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-//            preparedStatement.setDouble(1, dto.getAmountOfMoney());
-//            preparedStatement.setLong(2, dto.getReaderId());
-//            return preparedStatement.execute();
+
+//    public AccountDTO addSubscription(AccountDTO dto) {
+//        String addSubscription = "INSERT INTO periodicals (reader_id, periodical_id) VALUES (?,?)";
+//        String updateAccount = "update account inner join reader on account.id = reader.account_id set account.amount = ? where reader.id = " + dto.getReaderId() + ";";
+//        Connection connection = null;
+//        PreparedStatement preparedStatement = null;
+//
+//        if (getPeriodicalCost(dto.getPeriodicalId()) > getAmountFromAccount(dto.getReaderId())) {
+//            log.error("reader have not enough money on the account");
+//            throw new ReaderException("Not enough money on the account");
+//        } else {
+//            dto.setAmountOfMoney(getAmountFromAccount(dto.getReaderId()) - getPeriodicalCost(dto.getPeriodicalId()));
+//        }
+//        try {
+//            connection = dataSource.getConnection();
+//            connection.setAutoCommit(false);
+//            preparedStatement = connection.prepareStatement(addSubscription);
+//            preparedStatement.setLong(1, dto.getReaderId());
+//            preparedStatement.setLong(2, dto.getPeriodicalId());
+//            preparedStatement.execute();
+//            try (PreparedStatement preparedStatement1 = connection.prepareStatement(updateAccount)) {
+//                preparedStatement1.setDouble(1, dto.getAmountOfMoney());
+//                preparedStatement1.execute();
+//                connection.commit();
+//                return dto;
+//            }
+//        } catch (Exception e) {
+//            rollback(connection);
+//            log.error(e.getMessage());
+//            throw new ReaderException("Transaction failed with add subscription");
+//        } finally {
+//            close(preparedStatement);
+//            close(connection);
 //        }
 //    }
-
-    public AccountDTO addSubscription(AccountDTO dto) {
-        String addSubscription = "INSERT INTO periodicals (reader_id, periodical_id) VALUES (?,?)";
-        String updateAccount = "update account inner join reader on account.id = reader.account_id set account.amount = ? where reader.id = " + dto.getReaderId() + ";";
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-
-        if (getPeriodicalCost(dto.getPeriodicalId()) > getAmountFromAccount(dto.getReaderId())) {
-            log.error("reader have not enough money on the account");
-            throw new ReaderException("Not enough money on the account");
-        } else {
-            dto.setAmountOfMoney(getAmountFromAccount(dto.getReaderId()) - getPeriodicalCost(dto.getPeriodicalId()));
-        }
-        try {
-            connection = dataSource.getConnection();
-            connection.setAutoCommit(false);
-            preparedStatement = connection.prepareStatement(addSubscription);
-            preparedStatement.setLong(1, dto.getReaderId());
-            preparedStatement.setLong(2, dto.getPeriodicalId());
-            preparedStatement.execute();
-            try (PreparedStatement preparedStatement1 = connection.prepareStatement(updateAccount)) {
-                preparedStatement1.setDouble(1, dto.getAmountOfMoney());
-                preparedStatement1.execute();
-                connection.commit();
-                return dto;
-            }
-        } catch (Exception e) {
-            rollback(connection);
-            log.error(e.getMessage());
-            throw new ReaderException("Transaction failed with add subscription");
-        } finally {
-            close(preparedStatement);
-            close(connection);
-        }
-    }
-
-    @SneakyThrows
-    private Double getPeriodicalCost(Long periodicalId) {
-        String selectCost = "SELECT cost FROM periodical WHERE id = ? ";
-        Periodical periodical = new Periodical();
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(selectCost)) {
-            preparedStatement.setLong(1, periodicalId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                double cost = resultSet.getDouble("cost");
-                periodical.setCost(cost);
-            }
-        }
-        return periodical.getCost();
-    }
-
-    @SneakyThrows
-    private Double getAmountFromAccount(Long readerId) {
-        String selectAccountAmount = "select account.id, amount from account join reader on reader.account_id = account.id where reader.id = ?";
-        Account readerAccount = new Account();
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(selectAccountAmount)) {
-            preparedStatement.setLong(1, readerId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                long accId = resultSet.getLong("id");
-                double amount = resultSet.getDouble("amount");
-                readerAccount.setId(accId);
-                readerAccount.setAmountOfMoney(amount);
-            }
-        }
-        return readerAccount.getAmountOfMoney();
-    }
+//
+//    @SneakyThrows
+//    private Double getPeriodicalCost(Long periodicalId) {
+//        String selectCost = "SELECT cost FROM periodical WHERE id = ? ";
+//        Periodical periodical = new Periodical();
+//        try (Connection connection = dataSource.getConnection();
+//             PreparedStatement preparedStatement = connection.prepareStatement(selectCost)) {
+//            preparedStatement.setLong(1, periodicalId);
+//            ResultSet resultSet = preparedStatement.executeQuery();
+//            if (resultSet.next()) {
+//                double cost = resultSet.getDouble("cost");
+//                periodical.setCost(cost);
+//            }
+//        }
+//        return periodical.getCost();
+//    }
+//
+//    @SneakyThrows
+//    private Double getAmountFromAccount(Long readerId) {
+//        String selectAccountAmount = "select account.id, amount from account join reader on reader.account_id = account.id where reader.id = ?";
+//        Account readerAccount = new Account();
+//        try (Connection connection = dataSource.getConnection();
+//             PreparedStatement preparedStatement = connection.prepareStatement(selectAccountAmount)) {
+//            preparedStatement.setLong(1, readerId);
+//            ResultSet resultSet = preparedStatement.executeQuery();
+//            if (resultSet.next()) {
+//                long accId = resultSet.getLong("id");
+//                double amount = resultSet.getDouble("amount");
+//                readerAccount.setId(accId);
+//                readerAccount.setAmountOfMoney(amount);
+//            }
+//        }
+//        return readerAccount.getAmountOfMoney();
+//    }
 
 
     @SneakyThrows

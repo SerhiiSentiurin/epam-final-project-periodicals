@@ -3,6 +3,7 @@ package periodicals.epam.com.project.logic.services;
 import lombok.RequiredArgsConstructor;
 import periodicals.epam.com.project.logic.dao.PeriodicalDAO;
 import periodicals.epam.com.project.logic.entity.Periodical;
+import periodicals.epam.com.project.logic.entity.Prepayment;
 
 import java.util.Comparator;
 import java.util.List;
@@ -74,6 +75,10 @@ public class PeriodicalService {
 
     public List<Periodical> getPeriodicalsByReaderId(Long readerId) {
         return periodicalDAO.getPeriodicalsByReaderId(readerId);
+    }
+
+    public List<Prepayment> getPrepaymentInfoByReaderId(Long readerId){
+        return periodicalDAO.getPrepaymentInfoByReaderId(readerId);
     }
 
     public List<Periodical> getPeriodicalsForSubscribing(Long readerId) {

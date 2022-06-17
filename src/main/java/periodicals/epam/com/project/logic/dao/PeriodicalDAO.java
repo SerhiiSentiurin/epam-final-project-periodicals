@@ -4,6 +4,7 @@ import liquibase.pro.packaged.P;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import periodicals.epam.com.project.logic.entity.Periodical;
+import periodicals.epam.com.project.logic.entity.Prepayment;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -82,14 +83,15 @@ public class PeriodicalDAO {
 
     @SneakyThrows
     public List<Periodical> getPeriodicalsByReaderId(Long readerId) {
-        String selectPeriodicalsByReaderId = "SELECT * FROM periodical JOIN periodicals ON periodical.id = periodicals.periodical_id WHERE reader_id =?";
+//        String selectPeriodicalsByReaderId ="SELECT periodical.id, name, topic, cost, description, start_date, due_date FROM periodical JOIN prepayment ON periodical.id = prepayment.periodical_id WHERE reader_id =?";
+        String selectPeriodicalsByReaderId = "SELECT * FROM periodical JOIN periodicals ON periodical.id = periodicals.periodical_id WHERE reader_id =?"; //change
         List<Periodical> periodicals = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(selectPeriodicalsByReaderId)) {
             preparedStatement.setLong(1, readerId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
-                    long periodicalId = resultSet.getLong("id");
+                    long periodicalId = resultSet.getLong("periodical.id");
                     String name = resultSet.getString("name");
                     String topic = resultSet.getString("topic");
                     double cost = resultSet.getDouble("cost");
@@ -100,6 +102,27 @@ public class PeriodicalDAO {
             }
         }
         return periodicals;
+    }
+
+    @SneakyThrows
+    public List<Prepayment> getPrepaymentInfoByReaderId(Long readerId) {
+        String selectPeriodicalsByReaderId ="SELECT prepayment.id, name, topic, cost, description, start_date, due_date, periodical_id FROM periodical JOIN prepayment ON periodical.id = prepayment.periodical_id WHERE reader_id =?";
+        List<Prepayment> prepayments = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(selectPeriodicalsByReaderId)) {
+            preparedStatement.setLong(1, readerId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    long prepaymentId = resultSet.getLong("id");
+                    String startDate = resultSet.getString("start_date");
+                    String dueDate = resultSet.getString("due_date");
+                    long periodicalId = resultSet.getLong("periodical_id");
+                    Prepayment prepayment = new Prepayment(prepaymentId,startDate,dueDate,periodicalId,readerId);
+                    prepayments.add(prepayment);
+                }
+            }
+        }
+        return prepayments;
     }
 
     @SneakyThrows

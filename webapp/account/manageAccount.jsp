@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Welcome page.</title>
+        <title>Manage Account</title>
         <meta charset="UTF-8">
     </head>
     <body>

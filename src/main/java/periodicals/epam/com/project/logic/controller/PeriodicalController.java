@@ -5,9 +5,12 @@ import lombok.AllArgsConstructor;
 import periodicals.epam.com.project.infrastructure.web.ModelAndView;
 import periodicals.epam.com.project.infrastructure.web.QueryParameterHandler;
 import periodicals.epam.com.project.logic.entity.Periodical;
+import periodicals.epam.com.project.logic.entity.Prepayment;
 import periodicals.epam.com.project.logic.services.PeriodicalService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @AllArgsConstructor
@@ -122,7 +125,12 @@ public class PeriodicalController {
         ModelAndView modelAndView = new ModelAndView();
         long readerId = Long.parseLong(request.getParameter("readerId"));
         List<Periodical> subscribedPeriodicals = periodicalService.getPeriodicalsByReaderId(readerId);
-        modelAndView.addAttribute("periodicals", subscribedPeriodicals);
+        List<Prepayment> prepaymentInfo = periodicalService.getPrepaymentInfoByReaderId(readerId);
+        Map<List<Periodical>, List<Prepayment>> infoList = new HashMap<>();
+        infoList.put(subscribedPeriodicals,prepaymentInfo);
+        modelAndView.addAttribute("periodicals", infoList);
+//        modelAndView.addAttribute("periodicals", subscribedPeriodicals);
+//        modelAndView.addAttribute("prepayments", prepaymentInfo);
         modelAndView.setView("/periodical/watchSubscriptions.jsp");
         return modelAndView;
     }

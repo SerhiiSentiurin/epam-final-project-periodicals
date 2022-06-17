@@ -7,24 +7,15 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRegistration;
 import lombok.extern.log4j.Log4j2;
-import periodicals.epam.com.project.logic.controller.AccountController;
-import periodicals.epam.com.project.logic.controller.PeriodicalController;
-import periodicals.epam.com.project.logic.controller.ReaderController;
-import periodicals.epam.com.project.logic.controller.UserController;
-import periodicals.epam.com.project.logic.dao.AccountDAO;
-import periodicals.epam.com.project.logic.dao.PeriodicalDAO;
-import periodicals.epam.com.project.logic.dao.ReaderDAO;
-import periodicals.epam.com.project.logic.dao.UserDAO;
+import periodicals.epam.com.project.logic.controller.*;
+import periodicals.epam.com.project.logic.dao.*;
 import periodicals.epam.com.project.infrastructure.config.ConfigLoader;
 import periodicals.epam.com.project.infrastructure.config.db.ConfigureDataSource;
 import periodicals.epam.com.project.infrastructure.config.db.ConfigureLiquibase;
 import periodicals.epam.com.project.infrastructure.web.*;
 import periodicals.epam.com.project.infrastructure.web.exception.ExceptionHandler;
 import periodicals.epam.com.project.logic.entity.UserRole;
-import periodicals.epam.com.project.logic.services.AccountService;
-import periodicals.epam.com.project.logic.services.PeriodicalService;
-import periodicals.epam.com.project.logic.services.ReaderService;
-import periodicals.epam.com.project.logic.services.UserService;
+import periodicals.epam.com.project.logic.services.*;
 
 
 import javax.sql.DataSource;
@@ -69,13 +60,16 @@ public class ServletInitializer implements ServletContainerInitializer {
         PeriodicalService periodicalService = getPeriodicalService(dataSource);
         ReaderService readerService = getReaderService(dataSource);
         AccountService accountService = getAccountService(dataSource);
+        PrepaymentService prepaymentService = getPrepaymentService(dataSource);
 
         PeriodicalController periodicalController = createPeriodicalController(queryParameterHandler, periodicalService);
         ReaderController readerController = createReaderController(queryParameterHandler, periodicalService, readerService);
         AccountController accountController = createAccountController(queryParameterHandler,accountService);
+        PrepaymentController prepaymentController = createPrepaymentController(queryParameterHandler,prepaymentService);
 
+        placeholders.add(new Placeholder("POST", "prepayment/addSubscription", prepaymentController::addSubscription));
         placeholders.add(new Placeholder("POST", "reader/create", readerController::createReader));
-        placeholders.add(new Placeholder("POST", "reader/addSubscribing", readerController::addSubscription));
+//        placeholders.add(new Placeholder("POST", "reader/addSubscription", readerController::addSubscription));
         placeholders.add(new Placeholder("GET", "reader", readerController::getReaderById));
         placeholders.add(new Placeholder("GET", "periodical/watch", periodicalController::getAllPeriodical));
         placeholders.add(new Placeholder("GET", "periodical/watchByTopic", periodicalController::getPeriodicalsByTopic));
@@ -108,6 +102,15 @@ public class ServletInitializer implements ServletContainerInitializer {
 
     private AccountController createAccountController(QueryParameterHandler queryParameterHandler, AccountService accountService){
         return new AccountController(accountService,queryParameterHandler);
+    }
+
+    private PrepaymentController createPrepaymentController(QueryParameterHandler queryParameterHandler, PrepaymentService prepaymentService){
+        return new PrepaymentController(prepaymentService,queryParameterHandler);
+    }
+
+    private PrepaymentService getPrepaymentService (DataSource dataSource){
+        PrepaymentDAO prepaymentDAO = new PrepaymentDAO(dataSource);
+        return new PrepaymentService(prepaymentDAO);
     }
 
     private AccountService getAccountService (DataSource dataSource){

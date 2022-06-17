@@ -3,7 +3,6 @@ package periodicals.epam.com.project.logic.services;
 import lombok.RequiredArgsConstructor;
 import periodicals.epam.com.project.logic.dao.ReaderDAO;
 import periodicals.epam.com.project.logic.entity.Reader;
-import periodicals.epam.com.project.logic.entity.dto.AccountDTO;
 import periodicals.epam.com.project.logic.entity.dto.ReaderCreateDTO;
 import periodicals.epam.com.project.logic.logicExeption.ReaderException;
 
@@ -23,12 +22,8 @@ public class ReaderService {
         return readerDAO.getReaderById(id).orElseThrow(() -> new ReaderException("can't find reader"));
     }
 
-    public AccountDTO addSubscription(AccountDTO accountDTO){
-        return readerDAO.addSubscription(accountDTO);
-    }
-
-//    public boolean updateAccountAmount(AccountDTO accountDTO){
-//        return readerDAO.updateAccount(accountDTO);
+//    public AccountDTO addSubscription(AccountDTO accountDTO){
+//        return readerDAO.addSubscription(accountDTO);
 //    }
 
 

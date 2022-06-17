@@ -19,7 +19,7 @@
                     <th>Topic</th>
                     <th>Cost</th>
                     <th>Description</th>
-                    <th>Subscribe</th>
+                    <th>Choose subscribe period!</th>
                 </tr>
             <c:forEach items="${periodicals}" var="periodical">
                 <tr>
@@ -27,14 +27,21 @@
                     <td>${periodical.topic}</td>
                     <td>${periodical.cost}</td>
                     <td>${periodical.description}</td>
-                    <td><form action ="/app/periodicals/reader/addSubscribing" method = "POST">
-                                    <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
-                                    <input type = "hidden" name = "periodicalId" value = "${periodical.id}">
-                                    <input type = "submit" value ='Subscribe'>
-                        </form></td>
+                    <td align="center">
+                        <form action ="/app/periodicals/prepayment/addSubscription" method = "POST">
+                            <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
+                            <input type = "hidden" name = "periodicalId" value = "${periodical.id}">
+                                <select name="durationOfSubscription">
+                                    <option value="30">Subscription for 30 days!</option>
+                                    <option value="365" selected>Subscription for 365 days!(with 10% discount)</option>
+                                </select>
+                            <input type = "submit" value ='Subscribe'>
+                        </form>
+                    </td>
                 </tr>
             </c:forEach>
         </table>
+
         <button onclick="location.href='/app/reader/readerHome.jsp'"> Back home </button>
 
         <style>

@@ -35,19 +35,12 @@ public class ReaderController {
         return modelAndView;
     }
 
-    public ModelAndView addSubscription(HttpServletRequest request) {
-        AccountDTO dto = queryParameterHandler.handleRequest(request, AccountDTO.class);
-        readerService.addSubscription(dto);
-        ModelAndView modelAndView = ModelAndView.withView("/periodicals/periodical/periodicalsForSubscribing?readerId=" + dto.getReaderId());
-        modelAndView.setRedirect(true);
-        return modelAndView;
-    }
-
-//    public ModelAndView updateAccount(HttpServletRequest request) {
+//    public ModelAndView addSubscription(HttpServletRequest request) {
 //        AccountDTO dto = queryParameterHandler.handleRequest(request, AccountDTO.class);
-//        readerService.updateAccountAmount(dto);
-//        ModelAndView modelAndView = ModelAndView.withView("/periodicals/reader?readerId=" + dto.getReaderId());
+//        readerService.addSubscription(dto);
+//        ModelAndView modelAndView = ModelAndView.withView("/periodicals/periodical/periodicalsForSubscribing?readerId=" + dto.getReaderId());
 //        modelAndView.setRedirect(true);
 //        return modelAndView;
 //    }
+
 }
