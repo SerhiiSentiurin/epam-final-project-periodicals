@@ -1,7 +1,5 @@
 package periodicals.epam.com.project.infrastructure.web;
 
-
-
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import periodicals.epam.com.project.infrastructure.web.exception.ApplicationException;

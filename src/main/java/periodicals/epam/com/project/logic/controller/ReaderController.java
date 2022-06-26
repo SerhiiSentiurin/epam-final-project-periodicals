@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import periodicals.epam.com.project.infrastructure.web.ModelAndView;
 import periodicals.epam.com.project.infrastructure.web.QueryParameterHandler;
 import periodicals.epam.com.project.logic.entity.Reader;
-import periodicals.epam.com.project.logic.entity.dto.AccountDTO;
 import periodicals.epam.com.project.logic.entity.dto.ReaderCreateDTO;
 import periodicals.epam.com.project.logic.services.PeriodicalService;
 import periodicals.epam.com.project.logic.services.ReaderService;
@@ -34,13 +33,4 @@ public class ReaderController {
         modelAndView.setRedirect(true);
         return modelAndView;
     }
-
-//    public ModelAndView addSubscription(HttpServletRequest request) {
-//        AccountDTO dto = queryParameterHandler.handleRequest(request, AccountDTO.class);
-//        readerService.addSubscription(dto);
-//        ModelAndView modelAndView = ModelAndView.withView("/periodicals/periodical/periodicalsForSubscribing?readerId=" + dto.getReaderId());
-//        modelAndView.setRedirect(true);
-//        return modelAndView;
-//    }
-
 }

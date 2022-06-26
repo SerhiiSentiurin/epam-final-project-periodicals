@@ -7,11 +7,10 @@
         <meta charset="UTF-8">
     </head>
     <body>
-         <jsp:text>
-            Welcome ${sessionScope.user.login}, this is your home page!
-         </jsp:text>
-         <br><br>
-
+        <jsp:text>
+              Welcome ${sessionScope.user.login}, this is your home page!
+        </jsp:text>
+        <br><br>
         <br><br>
 
         <form action ="/app/periodicals/periodical/readerSubscriptions" method = "GET">
@@ -33,7 +32,10 @@
                     <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
                     <input type = "submit" value ='Manage'>
         </form>
-
+        <br><br><br>
+        <form action = "/app/periodicals/logout" method = "POST">
+                    <input type = "submit" value = 'Logout'>
+        </form>
 
     </body>
 </html>

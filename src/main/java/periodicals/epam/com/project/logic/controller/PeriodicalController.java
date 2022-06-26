@@ -6,9 +6,11 @@ import periodicals.epam.com.project.infrastructure.web.ModelAndView;
 import periodicals.epam.com.project.infrastructure.web.QueryParameterHandler;
 import periodicals.epam.com.project.logic.entity.Periodical;
 import periodicals.epam.com.project.logic.entity.Prepayment;
+import periodicals.epam.com.project.logic.entity.Reader;
 import periodicals.epam.com.project.logic.services.PeriodicalService;
+import periodicals.epam.com.project.logic.services.ReaderService;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +18,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class PeriodicalController {
     private final PeriodicalService periodicalService;
+    private final ReaderService readerService;
     private final QueryParameterHandler queryParameterHandler;
 
 
@@ -88,12 +91,12 @@ public class PeriodicalController {
         String topic = request.getParameter("topic");
         String name = request.getParameter("name");
         List<Periodical> sortedPeriodicals;
-        if (topic.isEmpty()&&name.isEmpty()) {
+        if (topic.isEmpty() && name.isEmpty()) {
             sortedPeriodicals = periodicalService.sortPeriodicalsByName();
-        } else if (name.isEmpty()){
+        } else if (name.isEmpty()) {
             sortedPeriodicals = periodicalService.sortPeriodicalsByNameByTopic(topic);
             modelAndView.addAttribute("topic", topic);
-        }else {
+        } else {
             sortedPeriodicals = periodicalService.sortPeriodicalsByNameByName(name);
             modelAndView.addAttribute("name", name);
         }
@@ -107,12 +110,12 @@ public class PeriodicalController {
         String topic = request.getParameter("topic");
         String name = request.getParameter("name");
         List<Periodical> sortedPeriodicals;
-        if (topic.isEmpty()&&name.isEmpty()) {
+        if (topic.isEmpty() && name.isEmpty()) {
             sortedPeriodicals = periodicalService.reversedSortPeriodicalsByName();
-        } else if (name.isEmpty()){
+        } else if (name.isEmpty()) {
             sortedPeriodicals = periodicalService.reversedSortPeriodicalsByNameByTopic(topic);
             modelAndView.addAttribute("topic", topic);
-        }else {
+        } else {
             sortedPeriodicals = periodicalService.reversedSortPeriodicalsByNameByName(name);
             modelAndView.addAttribute("name", name);
         }
@@ -125,21 +128,75 @@ public class PeriodicalController {
         ModelAndView modelAndView = new ModelAndView();
         long readerId = Long.parseLong(request.getParameter("readerId"));
         List<Periodical> subscribedPeriodicals = periodicalService.getPeriodicalsByReaderId(readerId);
-        List<Prepayment> prepaymentInfo = periodicalService.getPrepaymentInfoByReaderId(readerId);
-        Map<List<Periodical>, List<Prepayment>> infoList = new HashMap<>();
-        infoList.put(subscribedPeriodicals,prepaymentInfo);
-        modelAndView.addAttribute("periodicals", infoList);
-//        modelAndView.addAttribute("periodicals", subscribedPeriodicals);
-//        modelAndView.addAttribute("prepayments", prepaymentInfo);
+        List<Prepayment> prepaymentInfo = periodicalService.getPrepaymentsByReaderId(readerId);
+        modelAndView.addAttribute("periodicals", subscribedPeriodicals);
+        modelAndView.addAttribute("prepayments", prepaymentInfo);
+        modelAndView.setView("/periodical/watchSubscriptions.jsp");
+        return modelAndView;
+    }
+
+    public ModelAndView getPeriodicalsByTopicByReaderId(HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView();
+        long readerId = Long.parseLong(request.getParameter("readerId"));
+        String topic = request.getParameter("topic");
+        Map<Periodical, Prepayment> infoList = periodicalService.getPeriodicalsByTopicByReaderId(topic, readerId);
+        List<Periodical> subscribedPeriodicals = new ArrayList<>(infoList.keySet());
+        List<Prepayment> prepaymentInfo = new ArrayList<>(infoList.values());
+        modelAndView.addAttribute("periodicals", subscribedPeriodicals);
+        modelAndView.addAttribute("prepayments", prepaymentInfo);
+        modelAndView.addAttribute("topic", topic);
+        modelAndView.setView("/periodical/watchSubscriptions.jsp");
+        return modelAndView;
+    }
+
+    public ModelAndView findPeriodicalsByNameByReaderId(HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView();
+        long readerId = Long.parseLong(request.getParameter("readerId"));
+        String name = request.getParameter("name");
+        Map<Periodical,Prepayment> infoList = periodicalService.findPeriodicalsByNameByReaderId(name,readerId);
+        List<Periodical> subscribedPeriodicals = new ArrayList<>(infoList.keySet());
+        List<Prepayment> prepaymentInfo = new ArrayList<>(infoList.values());
+
+        modelAndView.addAttribute("periodicals", subscribedPeriodicals);
+        modelAndView.addAttribute("prepayments", prepaymentInfo);
+        modelAndView.addAttribute("name", name);
         modelAndView.setView("/periodical/watchSubscriptions.jsp");
         return modelAndView;
     }
 
     public ModelAndView getPeriodicalsForSubscribing(HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView();
         long readerId = Long.parseLong(request.getParameter("readerId"));
         List<Periodical> periodicalsForSubscribing = periodicalService.getPeriodicalsForSubscribing(readerId);
-        ModelAndView modelAndView = new ModelAndView();
+        Reader reader = readerService.getReaderById(readerId);
+        modelAndView.addAttribute("reader",reader);
         modelAndView.addAttribute("periodicals", periodicalsForSubscribing);
+        modelAndView.setView("/periodical/periodicalsForSubscribing.jsp");
+        return modelAndView;
+    }
+
+    public ModelAndView getPeriodicalsForSubscribingByTopicByReaderId(HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView();
+        long readerId = Long.parseLong(request.getParameter("readerId"));
+        String topic = request.getParameter("topic");
+        List<Periodical> periodicalsForSubscribing = periodicalService.getPeriodicalsForSubscribingByTopicByReaderId(topic, readerId);
+        Reader reader = readerService.getReaderById(readerId);
+        modelAndView.addAttribute("reader",reader);
+        modelAndView.addAttribute("periodicals", periodicalsForSubscribing);
+        modelAndView.addAttribute("topic", topic);
+        modelAndView.setView("/periodical/periodicalsForSubscribing.jsp");
+        return modelAndView;
+    }
+
+    public ModelAndView findPeriodicalsForSubscribingByNameByReaderId(HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView();
+        long readerId = Long.parseLong(request.getParameter("readerId"));
+        String name = request.getParameter("name");
+        List<Periodical> periodicalsForSubscribing = periodicalService.findPeriodicalsForSubscribingByNameByReaderId(name,readerId);
+        Reader reader = readerService.getReaderById(readerId);
+        modelAndView.addAttribute("reader",reader);
+        modelAndView.addAttribute("periodicals", periodicalsForSubscribing);
+        modelAndView.addAttribute("name", name);
         modelAndView.setView("/periodical/periodicalsForSubscribing.jsp");
         return modelAndView;
     }

@@ -7,6 +7,7 @@ import periodicals.epam.com.project.logic.entity.Prepayment;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -61,15 +62,15 @@ public class PeriodicalService {
         return periodicalDAO.getPeriodicalByName(name).stream().sorted(Comparator.comparing(Periodical::getCost)).collect(Collectors.toList());
     }
 
-    public List<Periodical> reversedSortPeriodicalsByCostByName(String name){
+    public List<Periodical> reversedSortPeriodicalsByCostByName(String name) {
         return periodicalDAO.getPeriodicalByName(name).stream().sorted(Comparator.comparing(Periodical::getCost).reversed()).collect(Collectors.toList());
     }
 
-    public List<Periodical> sortPeriodicalsByNameByName(String name){
+    public List<Periodical> sortPeriodicalsByNameByName(String name) {
         return periodicalDAO.getPeriodicalByName(name).stream().sorted(Comparator.comparing(Periodical::getName)).collect(Collectors.toList());
     }
 
-    public List<Periodical> reversedSortPeriodicalsByNameByName(String name){
+    public List<Periodical> reversedSortPeriodicalsByNameByName(String name) {
         return periodicalDAO.getPeriodicalByName(name).stream().sorted(Comparator.comparing(Periodical::getName).reversed()).collect(Collectors.toList());
     }
 
@@ -77,13 +78,31 @@ public class PeriodicalService {
         return periodicalDAO.getPeriodicalsByReaderId(readerId);
     }
 
-    public List<Prepayment> getPrepaymentInfoByReaderId(Long readerId){
-        return periodicalDAO.getPrepaymentInfoByReaderId(readerId);
+    public Map<Periodical, Prepayment> getPeriodicalsByTopicByReaderId(String topic, Long readerId) {
+        return periodicalDAO.getPeriodicalsByTopicByReaderId(topic,readerId);
+    }
+
+    public Map<Periodical, Prepayment> findPeriodicalsByNameByReaderId(String name, Long readerId) {
+        return periodicalDAO.findPeriodicalsByNameByReaderId(name,readerId);
+    }
+
+    public List<Prepayment> getPrepaymentsByReaderId(Long readerId) {
+        return periodicalDAO.getPrepaymentsByReaderId(readerId);
     }
 
     public List<Periodical> getPeriodicalsForSubscribing(Long readerId) {
-        final List<Long> periodicalIdByReaderId = periodicalDAO.getPeriodicalIdByReaderId(readerId);
+        List<Long> periodicalIdByReaderId = periodicalDAO.getPeriodicalIdByReaderId(readerId);
         return periodicalDAO.getPeriodicalsForSubscribing(periodicalIdByReaderId);
+    }
+
+    public List<Periodical> getPeriodicalsForSubscribingByTopicByReaderId(String topic, Long readerId) {
+        List<Long> periodicalIdByReaderId = periodicalDAO.getPeriodicalIdByReaderId(readerId);
+        return periodicalDAO.getPeriodicalsForSubscribing(periodicalIdByReaderId).stream().filter(periodical -> periodical.getTopic().equals(topic)).collect(Collectors.toList());
+    }
+
+    public List<Periodical> findPeriodicalsForSubscribingByNameByReaderId(String name, Long readerId) {
+        List<Long> periodicalIdByReaderId = periodicalDAO.getPeriodicalIdByReaderId(readerId);
+        return periodicalDAO.findPeriodicalsForSubscribingByName(periodicalIdByReaderId,name);
     }
 
 }

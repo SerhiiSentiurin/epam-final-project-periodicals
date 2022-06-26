@@ -18,7 +18,6 @@
          <button type ="submit">Search</button>
          </form>
 
- <%--добавить сообщ об ошибке "Periodical with this name didn't exist", если название из нескольких слов то не ищет по одному--%>
          <form action = "/app/periodicals/periodical/findByName" method ="GET">
             <label for="name">Find periodical by name:</label>
             <input type="text" name="name" required >

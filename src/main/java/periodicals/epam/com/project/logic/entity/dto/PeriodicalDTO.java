@@ -1,4 +1,4 @@
-package periodicals.epam.com.project.logic.entity;
+package periodicals.epam.com.project.logic.entity.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,11 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Periodical {
-    private long id;
+public class PeriodicalDTO {
     private String name;
     private String topic;
     private Double cost;
     private String description;
-    private Boolean isDeleted;
+    private Long periodicalId;
 }

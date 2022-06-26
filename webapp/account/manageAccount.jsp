@@ -20,7 +20,7 @@
                          </tr>
                          <tr>
                              <td align="center">
-                                <form action ="/app/periodicals/topUpAccountAmount" method = "POST">
+                                <form action ="/app/periodicals/account/topUpAccountAmount" method = "POST">
                                              <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
                                              <input type="number" step = 0.01 name="amountOfMoney" required><br>
                                              <input type = "submit" value ='Top up'>

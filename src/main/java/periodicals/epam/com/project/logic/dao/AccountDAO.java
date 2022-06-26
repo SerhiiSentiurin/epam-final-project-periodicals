@@ -17,7 +17,7 @@ public class AccountDAO {
     private final DataSource dataSource;
     @SneakyThrows
     public boolean topUpAccountAmount(AccountDTO dto) {
-        String sql = "update account inner join reader on account.id = reader.account_id set account.amount = ? where reader.id = ?";
+        String sql = "UPDATE account INNER JOIN reader ON account.id = reader.account_id SET account.amount = ? WHERE reader.id = ?";
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setDouble(1, dto.getAmountOfMoney() + getAmountOfMoneyByReaderId(dto));
@@ -28,7 +28,7 @@ public class AccountDAO {
 
     @SneakyThrows
     public Double getAmountOfMoneyByReaderId (AccountDTO dto){
-        String selectAccountAmount = "select account.id, amount from account join reader on reader.account_id = account.id where reader.id = ?";
+        String selectAccountAmount = "SELECT account.id, amount FROM account JOIN reader ON reader.account_id = account.id WHERE reader.id = ?";
         Account readerAccount = new Account();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(selectAccountAmount)) {

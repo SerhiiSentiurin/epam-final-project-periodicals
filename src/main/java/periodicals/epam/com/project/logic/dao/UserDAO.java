@@ -19,7 +19,7 @@ public class UserDAO {
 
     @SneakyThrows
     public Optional<User> getUserByLogin(String login) {
-        String sql = "select * from user where login=?";
+        String sql = "SELECT * FROM user WHERE login=?";
         User foundUser;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {

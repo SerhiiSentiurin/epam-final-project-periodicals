@@ -34,7 +34,7 @@ public class PrepaymentDAO {
             throw new ReaderException("Not enough money on the account");
         } else if ((costPeerYear > accountBalance) && (dto.getDurationOfSubscription() > 30)) {
             log.error("reader have not enough money on the account");
-            throw new ReaderException("Not enough money on the account, ty to get month subscription or top up your account!");
+            throw new ReaderException("Not enough money on the account, try to get month subscription or top up your account!");
         } else if (dto.getDurationOfSubscription() > 30) {
             dto.setAmountOfMoney(accountBalance - costPeerYear);
         } else {
@@ -84,7 +84,7 @@ public class PrepaymentDAO {
 
     @SneakyThrows
     private Double getAmountFromAccount(Long readerId) {
-        String selectAccountAmount = "select account.id, amount from account join reader on reader.account_id = account.id where reader.id = ?";
+        String selectAccountAmount = "SELECT account.id, amount FROM account JOIN reader ON reader.account_id = account.id WHERE reader.id = ?";
         Account readerAccount = new Account();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(selectAccountAmount)) {
@@ -99,7 +99,6 @@ public class PrepaymentDAO {
         }
         return readerAccount.getAmountOfMoney();
     }
-
 
     @SneakyThrows
     private void rollback(Connection connection) {

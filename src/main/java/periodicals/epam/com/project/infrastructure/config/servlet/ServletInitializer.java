@@ -6,6 +6,7 @@ import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRegistration;
+import liquibase.pro.packaged.P;
 import lombok.extern.log4j.Log4j2;
 import periodicals.epam.com.project.logic.controller.*;
 import periodicals.epam.com.project.logic.dao.*;
@@ -56,20 +57,22 @@ public class ServletInitializer implements ServletContainerInitializer {
 
         UserController userController = createUserController(queryParameterHandler, dataSource);
         placeholders.add(new Placeholder("POST", "login", userController::login));
+        placeholders.add(new Placeholder("POST", "logout", userController::logout));
 
         PeriodicalService periodicalService = getPeriodicalService(dataSource);
         ReaderService readerService = getReaderService(dataSource);
         AccountService accountService = getAccountService(dataSource);
         PrepaymentService prepaymentService = getPrepaymentService(dataSource);
+        AdminService adminService = getAdminService(dataSource);
 
-        PeriodicalController periodicalController = createPeriodicalController(queryParameterHandler, periodicalService);
+        PeriodicalController periodicalController = createPeriodicalController(queryParameterHandler, periodicalService, readerService);
         ReaderController readerController = createReaderController(queryParameterHandler, periodicalService, readerService);
-        AccountController accountController = createAccountController(queryParameterHandler,accountService);
-        PrepaymentController prepaymentController = createPrepaymentController(queryParameterHandler,prepaymentService);
+        AccountController accountController = createAccountController(queryParameterHandler, accountService);
+        PrepaymentController prepaymentController = createPrepaymentController(queryParameterHandler, prepaymentService);
+        AdminController adminController = createAdminController(queryParameterHandler, adminService);
 
         placeholders.add(new Placeholder("POST", "prepayment/addSubscription", prepaymentController::addSubscription));
         placeholders.add(new Placeholder("POST", "reader/create", readerController::createReader));
-//        placeholders.add(new Placeholder("POST", "reader/addSubscription", readerController::addSubscription));
         placeholders.add(new Placeholder("GET", "reader", readerController::getReaderById));
         placeholders.add(new Placeholder("GET", "periodical/watch", periodicalController::getAllPeriodical));
         placeholders.add(new Placeholder("GET", "periodical/watchByTopic", periodicalController::getPeriodicalsByTopic));
@@ -79,9 +82,23 @@ public class ServletInitializer implements ServletContainerInitializer {
         placeholders.add(new Placeholder("GET", "periodical/sortByName", periodicalController::sortPeriodicalsByName));
         placeholders.add(new Placeholder("GET", "periodical/reversedSortByName", periodicalController::reversedSortPeriodicalsByName));
         placeholders.add(new Placeholder("GET", "periodical/periodicalsForSubscribing", periodicalController::getPeriodicalsForSubscribing));
+        placeholders.add(new Placeholder("GET", "periodical/getByTopicPeriodicalsForSubscribing", periodicalController::getPeriodicalsForSubscribingByTopicByReaderId));
+        placeholders.add(new Placeholder("GET", "periodical/findByNamePeriodicalsForSubscribing", periodicalController::findPeriodicalsForSubscribingByNameByReaderId));
         placeholders.add(new Placeholder("GET", "periodical/readerSubscriptions", periodicalController::getPeriodicalsByReaderId));
-        placeholders.add(new Placeholder("POST", "topUpAccountAmount", accountController::topUpAccountAmount));
+        placeholders.add(new Placeholder("GET", "periodical/getByTopicReaderSubscriptions", periodicalController::getPeriodicalsByTopicByReaderId));
+        placeholders.add(new Placeholder("GET", "periodical/findByNameReaderSubscriptions", periodicalController::findPeriodicalsByNameByReaderId));
+        placeholders.add(new Placeholder("POST", "account/topUpAccountAmount", accountController::topUpAccountAmount));
         placeholders.add(new Placeholder("GET", "account/getAccountInfo", accountController::getAmountOfMoneyByReaderId));
+        placeholders.add(new Placeholder("GET", "admin/managePeriodicals", adminController::getAllPeriodicals));
+        placeholders.add(new Placeholder("POST", "admin/createNewPeriodical", adminController::createNewPeriodical));
+        placeholders.add(new Placeholder("POST", "admin/deletePeriodical", adminController::deletePeriodicalByPeriodicalId));
+        placeholders.add(new Placeholder("POST","admin/deletePeriodicalForReaders", adminController::deletePeriodicalForReaders));
+        placeholders.add(new Placeholder("POST", "admin/restorePeriodicalForReaders", adminController::restorePeriodicalForReaders));
+        placeholders.add(new Placeholder("GET", "admin/getPeriodicalForEdit", adminController::getPeriodicalById));
+        placeholders.add(new Placeholder("POST", "admin/editPeriodical", adminController::editPeriodicalById));
+        placeholders.add(new Placeholder("GET", "admin/manageReaders", adminController::getAllReaders));
+        placeholders.add(new Placeholder("POST", "admin/lockReader", adminController::lockReader));
+        placeholders.add(new Placeholder("POST", "admin/unlockReader", adminController::unlockReader));
         return new DispatcherRequest(placeholders);
     }
 
@@ -96,24 +113,28 @@ public class ServletInitializer implements ServletContainerInitializer {
         return new ReaderController(readerService, periodicalService, queryParameterHandler);
     }
 
-    private PeriodicalController createPeriodicalController(QueryParameterHandler queryParameterHandler, PeriodicalService periodicalService) {
-        return new PeriodicalController(periodicalService, queryParameterHandler);
+    private PeriodicalController createPeriodicalController(QueryParameterHandler queryParameterHandler, PeriodicalService periodicalService, ReaderService readerService) {
+        return new PeriodicalController(periodicalService, readerService, queryParameterHandler);
     }
 
-    private AccountController createAccountController(QueryParameterHandler queryParameterHandler, AccountService accountService){
-        return new AccountController(accountService,queryParameterHandler);
+    private AccountController createAccountController(QueryParameterHandler queryParameterHandler, AccountService accountService) {
+        return new AccountController(accountService, queryParameterHandler);
     }
 
-    private PrepaymentController createPrepaymentController(QueryParameterHandler queryParameterHandler, PrepaymentService prepaymentService){
-        return new PrepaymentController(prepaymentService,queryParameterHandler);
+    private PrepaymentController createPrepaymentController(QueryParameterHandler queryParameterHandler, PrepaymentService prepaymentService) {
+        return new PrepaymentController(prepaymentService, queryParameterHandler);
     }
 
-    private PrepaymentService getPrepaymentService (DataSource dataSource){
+    private AdminController createAdminController(QueryParameterHandler queryParameterHandler, AdminService adminService) {
+        return new AdminController(adminService, queryParameterHandler);
+    }
+
+    private PrepaymentService getPrepaymentService(DataSource dataSource) {
         PrepaymentDAO prepaymentDAO = new PrepaymentDAO(dataSource);
         return new PrepaymentService(prepaymentDAO);
     }
 
-    private AccountService getAccountService (DataSource dataSource){
+    private AccountService getAccountService(DataSource dataSource) {
         AccountDAO accountDAO = new AccountDAO(dataSource);
         return new AccountService(accountDAO);
     }
@@ -126,5 +147,10 @@ public class ServletInitializer implements ServletContainerInitializer {
     private ReaderService getReaderService(DataSource dataSource) {
         ReaderDAO readerDAO = new ReaderDAO(dataSource);
         return new ReaderService(readerDAO);
+    }
+
+    private AdminService getAdminService(DataSource dataSource) {
+        AdminDAO adminDAO = new AdminDAO(dataSource);
+        return new AdminService(adminDAO);
     }
 }

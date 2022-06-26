@@ -37,6 +37,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     unique: false
+              - column:
+                  name: isDeleted
+                  type: BOOLEAN
+                  defaultValue: false
+                  constraints:
+                    nullable: false
         - createTable:
             tableName: account
             columns:

@@ -9,9 +9,9 @@
     <body>
         <form accept-charset="UTF-8" method="POST" action="/app/periodicals/login">
             <label for="name">Login:</label><br>
-            <input type="text" name="login"><br><br>
+            <input type="text" name="login" required><br><br>
             <label for="pass">Password:</label><br>
-            <input type="password" name="password"><br><br>
+            <input type="password" name="password" required><br><br>
             <input type = "submit" style="width: 8%" value='Sign in'>
             <br><br>
             <input type = "submit" style="width: 8%" formaction="/app/periodicals/reader/create" value='Sign up'>

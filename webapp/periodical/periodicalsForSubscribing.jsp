@@ -7,42 +7,82 @@
         <meta charset="UTF-8">
     </head>
     <body>
-         <jsp:text>
-            Welcome ${sessionScope.user.login}, this is periodicals that you may subscribe!
-         </jsp:text>
-         <br><br>
 
-        <table id="listOfPeriodicals">
-            <caption>Periodicals you are not subscribed yet</caption>
-                <tr>
-                    <th>Name</th>
-                    <th>Topic</th>
-                    <th>Cost</th>
-                    <th>Description</th>
-                    <th>Choose subscribe period!</th>
-                </tr>
-            <c:forEach items="${periodicals}" var="periodical">
-                <tr>
-                    <td>${periodical.name}</td>
-                    <td>${periodical.topic}</td>
-                    <td>${periodical.cost}</td>
-                    <td>${periodical.description}</td>
-                    <td align="center">
-                        <form action ="/app/periodicals/prepayment/addSubscription" method = "POST">
-                            <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
-                            <input type = "hidden" name = "periodicalId" value = "${periodical.id}">
-                                <select name="durationOfSubscription">
-                                    <option value="30">Subscription for 30 days!</option>
-                                    <option value="365" selected>Subscription for 365 days!(with 10% discount)</option>
-                                </select>
-                            <input type = "submit" value ='Subscribe'>
-                        </form>
-                    </td>
-                </tr>
-            </c:forEach>
-        </table>
+        <c:if test="${periodicals.size() == 0}" >
+            <p>You have subscribed all periodicals</p>
+        </c:if>
+        <c:if test="${periodicals.size() > 0}" >
 
-        <button onclick="location.href='/app/reader/readerHome.jsp'"> Back home </button>
+        <form action = "/app/periodicals/periodical/getByTopicPeriodicalsForSubscribing" method = "GET">
+            <label for="topic">Find periodical by topic:</label>
+            <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
+                <select name="topic">
+                    <option value="business">business</option>
+                    <option value="sport" selected>sport</option>
+                    <option value="technology">technology</option>
+                </select>
+            <button type ="submit">Search</button>
+        </form>
+        <br>
+
+        <form action = "/app/periodicals/periodical/findByNamePeriodicalsForSubscribing" method ="GET">
+            <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
+            <label for="name">Find periodical by name:</label>
+            <input type="text" name="name" required>
+            <input type="submit" value='Search'>
+        </form>
+        <br><br>
+
+        <button onclick="sortName(false)">Sort by name</button>
+        <button onclick="sortName(true)">reversed sort by name</button>
+        <br><br>
+        <button onclick="sortPrice(false)">sort by cost</button>
+        <button onclick="sortPrice(true)">reversed sort by cost</button>
+        <br><br>
+
+        <form action = "/app/periodicals/periodical/periodicalsForSubscribing" method = "GET">
+            <label for="name">Click to reset sorting</label><br>
+                <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
+                <input type = "submit" value ='Reset'>
+        </form>
+
+            <table id="periodicalsForSubscribing">
+                <caption>Periodicals you have not subscribed yet</caption>
+                    <tr>
+                        <th>Name</th>
+                        <th>Topic</th>
+                        <th>Cost</th>
+                        <th>Description</th>
+                        <c:if test="${reader.lock == 'false'}" >
+                        <th>Choose subscribe period!</th>
+                        </c:if>
+                    </tr>
+                <c:forEach items="${periodicals}" var="periodical">
+                    <tr>
+                        <td>${periodical.name}</td>
+                        <td>${periodical.topic}</td>
+                        <td>${periodical.cost}</td>
+                        <td>${periodical.description}</td>
+                        <c:if test="${reader.lock == 'false'}" >
+                        <td align="center">
+                            <form action ="/app/periodicals/prepayment/addSubscription" method = "POST" onsubmit = "return confirm('You are subscribing periodical ${periodical.name}, are you sure?');">
+                                <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
+                                <input type = "hidden" name = "periodicalId" value = "${periodical.id}">
+                                    <select name="durationOfSubscription">
+                                        <option value="30">Subscription for 30 days!</option>
+                                        <option value="365" selected>Subscription for 365 days!(with 10% discount)</option>
+                                    </select>
+                                <input type = "submit" value ='Subscribe'>
+                            </form>
+                        </td>
+                        </c:if>
+                    </tr>
+                </c:forEach>
+            </table>
+        </c:if>
+
+
+    <button onclick="location.href='/app/reader/readerHome.jsp'"> Back home </button>
 
         <style>
             caption {
@@ -63,4 +103,76 @@
                  }
         </style>
     </body>
+
+    <script>
+        function sortName(inverse) {
+          var table, rows, switching, i, x, y, shouldSwitch;
+          table = document.getElementById("periodicalsForSubscribing");
+          switching = true;
+          /*Make a loop that will continue until
+          no switching has been done:*/
+          while (switching) {
+            //start by saying: no switching is done:
+            switching = false;
+            rows = table.rows;
+            /*Loop through all table rows (except the
+            first, which contains table headers):*/
+            for (i = 1; i < (rows.length - 1); i++) {
+              //start by saying there should be no switching:
+              shouldSwitch = false;
+              /*Get the two elements you want to compare,
+              one from current row and one from the next:*/
+              x = rows[i].getElementsByTagName('TD')[0];
+              y = rows[i + 1].getElementsByTagName('TD')[0];
+              //check if the two rows should switch place:
+              if ((x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) ^ inverse) {
+                //if so, mark as a switch and break the loop:
+                shouldSwitch = true;
+                break;
+              }
+            }
+            if (shouldSwitch) {
+              /*If a switch has been marked, make the switch
+              and mark that a switch has been done:*/
+              rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+              switching = true;
+            }
+          }
+        }
+        function sortPrice(inverse) {
+          var table, rows, switching, i, x, y, shouldSwitch;
+          table = document.getElementById("periodicalsForSubscribing");
+          switching = true;
+          /*Make a loop that will continue until
+          no switching has been done:*/
+          while (switching) {
+            //start by saying: no switching is done:
+            switching = false;
+            rows = table.rows;
+            /*Loop through all table rows (except the
+            first, which contains table headers):*/
+            for (i = 1; i < (rows.length - 1); i++) {
+              //start by saying there should be no switching:
+              shouldSwitch = false;
+              /*Get the two elements you want to compare,
+              one from current row and one from the next:*/
+              x = rows[i].getElementsByTagName('TD')[2];
+              y = rows[i + 1].getElementsByTagName('TD')[2];
+              //check if the two rows should switch place:
+              if ((parseInt(x.innerHTML, 10) > parseInt(y.innerHTML, 10)) ^ inverse) {
+                //if so, mark as a switch and break the loop:
+                shouldSwitch = true;
+                break;
+              }
+            }
+            if (shouldSwitch) {
+              /*If a switch has been marked, make the switch
+              and mark that a switch has been done:*/
+              rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+              switching = true;
+            }
+          }
+        }
+    </script>
+
 </html>
