@@ -14,7 +14,7 @@ databaseChangeLog:
                   value: admin
               - column:
                   name: password
-                  value: admin
+                  value: Admin111
               - column:
                   name: role
                   value: ADMIN

@@ -1,77 +1,74 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<!DOCTYPE html>
+<%@ taglib uri="/WEB-INF/tag/language.tld" prefix="lang" %>
 <html>
     <head>
-        <title>Your subscriptions page.</title>
+        <title>Reader subscriptions page</title>
         <meta charset="UTF-8">
     </head>
     <body>
-    <c:if test="${periodicals.size() == 0}" >
-            <p>You have not any periodicals</p>
-    </c:if>
+        <c:if test="${periodicals.size() == 0}" >
+            <p>
+                <lang:print message = "periodical.watchSubscriptions.jsp.you_have_not_any_subscriptions"/>
+            </p>
+        </c:if>
 
-    <c:if test="${periodicals.size() > 0}" >
+        <c:if test="${periodicals.size() > 0}" >
 
-    <form action = "/app/periodicals/periodical/getByTopicReaderSubscriptions" method = "GET">
-            <label for="topic">Find periodical by topic:</label>
-            <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
-                <select name="topic">
-                    <option value="business">business</option>
-                    <option value="sport" selected>sport</option>
-                    <option value="technology">technology</option>
-                 </select>
-            <button type ="submit">Search</button>
-    </form>
-    <br>
-    <form action = "/app/periodicals/periodical/findByNameReaderSubscriptions" method ="GET">
-            <label for="name">Find periodical by name:</label>
-            <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
-            <input type="text" name="name" required>
-           <button type ="submit">Search</button>
-    </form>
-    <br><br>
+            <form action = "/app/periodicals/periodical/getByTopicReaderSubscriptions" method = "GET">
+                <label for="topic"><lang:print message = "periodical.periodicalForSubscribing.jsp.label.find_periodical_by_topic"/>:</label>
+                <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
+                    <select name="topic">
+                        <option value="business"><lang:print message = "periodical.periodicalForSubscribing.jsp.option.business"/></option>
+                        <option value="sport" selected><lang:print message = "periodical.periodicalForSubscribing.jsp.option.sport"/></option>
+                        <option value="technology"><lang:print message = "periodical.periodicalForSubscribing.jsp.option.technology"/></option>
+                    </select>
+                <button type ="submit"><lang:print message = "periodical.periodicalForSubscribing.jsp.button.search"/></button>
+            </form><br>
 
-        <button onclick="sortName(false)">Sort by name</button>
-        <button onclick="sortName(true)">reversed sort by name</button>
-        <br><br>
-        <button onclick="sortPrice(false)">sort by cost</button>
-        <button onclick="sortPrice(true)">reversed sort by cost</button>
-        <br><br>
+            <form action = "/app/periodicals/periodical/findByNameReaderSubscriptions" method ="GET">
+                <label for="name"><lang:print message = "periodical.periodicalForSubscribing.jsp.label.find_periodical_by_name"/>:</label>
+                <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
+                <input type="text" name="name" required>
+                <button type ="submit"><lang:print message = "periodical.periodicalForSubscribing.jsp.button.search"/></button>
+            </form><br><br>
 
-        <form action ="/app/periodicals/periodical/readerSubscriptions" method = "GET">
-            <label for="name">Click to reset sorting</label><br>
-            <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
-            <input type = "submit" value ='Reset'>
-        </form>
+            <button onclick="sortName(false)"><lang:print message = "periodical.periodicalForSubscribing.jsp.button.sort_by_name"/></button>
+            <button onclick="sortName(true)"><lang:print message = "periodical.periodicalForSubscribing.jsp.button.reversed_sort_by_name"/></button>
+            <br><br>
+            <button onclick="sortPrice(false)"><lang:print message = "periodical.periodicalForSubscribing.jsp.button.sort_by_cost"/></button>
+            <button onclick="sortPrice(true)"><lang:print message = "periodical.periodicalForSubscribing.jsp.button.reversed_sort_by_cost"/></button>
+            <br><br>
 
-        <table id="subscriberPeriodicals">
-        <caption>Periodicals you have subscribed to</caption>
-            <tr>
-                <th>Name</th>
-                <th>Topic</th>
-                <th>Cost</th>
-                <th>Description</th>
-                <th>Start</th>
-                <th>End</th>
-            </tr>
+            <form action ="/app/periodicals/periodical/readerSubscriptions" method = "GET">
+                <label for="name"><lang:print message = "periodical.periodicalForSubscribing.jsp.label.click_to_reset_sorting"/></label><br>
+                <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
+                <input type = "submit" value ='<lang:print message = "periodical.periodicalForSubscribing.jsp.button.reset"/>'>
+            </form>
 
+            <table id="subscriberPeriodicals">
+                <caption><lang:print message = "periodical.watchSubscriptions.jsp.table.caption.periodicals_you_have_subscribed_to"/></caption>
+                    <tr>
+                        <th><lang:print message = "periodical.periodicalForSubscribing.jsp.table.name"/></th>
+                        <th><lang:print message = "periodical.periodicalForSubscribing.jsp.table.topic"/></th>
+                        <th><lang:print message = "periodical.periodicalForSubscribing.jsp.table.cost"/></th>
+                        <th><lang:print message = "periodical.periodicalForSubscribing.jsp.table.description"/></th>
+                        <th><lang:print message = "periodical.watchSubscriptions.jsp.table.start"/></th>
+                        <th><lang:print message = "periodical.watchSubscriptions.jsp.table.end"/></th>
+                    </tr>
                 <c:forEach var="i" begin="0" end="${periodicals.size()-1}">
-
-                <tr>
+                    <tr>
                         <td>${periodicals.get(i).name}</td>
                         <td>${periodicals.get(i).topic}</td>
                         <td>${periodicals.get(i).cost}</td>
                         <td>${periodicals.get(i).description}</td>
                         <td>${prepayments.get(i).startDate}</td>
                         <td>${prepayments.get(i).dueDate}</td>
-
-                </tr>
-            </c:forEach>
-
-        </table>
-         </c:if>
-        <button onclick="location.href='/app/reader/readerHome.jsp'"> Back home </button>
+                    </tr>
+                </c:forEach>
+            </table>
+        </c:if>
+        <button onclick="location.href='/app/reader/readerHome.jsp'"><lang:print message = "periodical.periodicalForSubscribing.jsp.button.back_home"/></button>
 
         <style>
             caption {
@@ -80,16 +77,16 @@
                 font-size: 1.5em;
                 padding: 10px;
                 border: 1px solid #A9E2CC;
-                  }
-                 th {
-                   padding: 10px;
-                   border: 1px solid #A9E2CC;
-                 }
-                 td {
-                   font-size: 1.0em;
-                   padding: 5px 7px;
-                   border: 1px solid #A9E2CC;
-                 }
+            }
+            th {
+                padding: 10px;
+                border: 1px solid #A9E2CC;
+            }
+            td {
+                font-size: 1.0em;
+                padding: 5px 7px;
+                border: 1px solid #A9E2CC;
+            }
         </style>
     </body>
 
@@ -163,5 +160,5 @@
         }
       }
     }
-            </script>
-    </html>
+    </script>
+</html>

@@ -97,7 +97,10 @@ public class PeriodicalService {
 
     public List<Periodical> getPeriodicalsForSubscribingByTopicByReaderId(String topic, Long readerId) {
         List<Long> periodicalIdByReaderId = periodicalDAO.getPeriodicalIdByReaderId(readerId);
-        return periodicalDAO.getPeriodicalsForSubscribing(periodicalIdByReaderId).stream().filter(periodical -> periodical.getTopic().equals(topic)).collect(Collectors.toList());
+        return periodicalDAO.getPeriodicalsForSubscribing(periodicalIdByReaderId)
+                .stream()
+                .filter(periodical -> periodical.getTopic().equals(topic))
+                .collect(Collectors.toList());
     }
 
     public List<Periodical> findPeriodicalsForSubscribingByNameByReaderId(String name, Long readerId) {

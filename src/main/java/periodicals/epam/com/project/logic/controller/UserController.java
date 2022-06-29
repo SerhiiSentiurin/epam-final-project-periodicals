@@ -11,6 +11,7 @@ import periodicals.epam.com.project.logic.entity.UserRole;
 import periodicals.epam.com.project.logic.entity.dto.UserDTO;
 import periodicals.epam.com.project.logic.services.UserService;
 
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -31,14 +32,26 @@ public class UserController {
         return modelAndView;
     }
 
-    public ModelAndView logout(HttpServletRequest request){
-    HttpSession session = request.getSession(false);
-    if (session!=null){
-        session.invalidate();
+    public ModelAndView logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setView("/index.jsp");
+        modelAndView.setRedirect(true);
+        return modelAndView;
     }
-    ModelAndView modelAndView = new ModelAndView();
-    modelAndView.setView("/index.jsp");
-    modelAndView.setRedirect(true);
-    return modelAndView;
+
+    public ModelAndView changeLocale(HttpServletRequest request) {
+        String selectedLocale = request.getParameter("selectedLocale");
+        String view = request.getParameter("view");
+        Locale locale = new Locale(selectedLocale);
+        HttpSession session = request.getSession(false);
+        session.setAttribute("selectedLocale", locale);
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setView(view);
+        modelAndView.setRedirect(true);
+        return modelAndView;
     }
 }

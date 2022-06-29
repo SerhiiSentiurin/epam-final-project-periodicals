@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import periodicals.epam.com.project.logic.entity.Periodical;
 import periodicals.epam.com.project.logic.entity.Prepayment;
+
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
@@ -28,7 +29,7 @@ public class PeriodicalDAO {
                 double cost = resultSet.getDouble("cost");
                 String description = resultSet.getString("description");
                 boolean isDeleted = resultSet.getBoolean("isDeleted");
-                Periodical periodical = new Periodical(id, name, topic, cost, description,isDeleted);
+                Periodical periodical = new Periodical(id, name, topic, cost, description, isDeleted);
                 listOfPeriodicals.add(periodical);
 
             }
@@ -50,7 +51,7 @@ public class PeriodicalDAO {
                     double cost = resultSet.getDouble("cost");
                     String description = resultSet.getString("description");
                     boolean isDeleted = resultSet.getBoolean("isDeleted");
-                    Periodical periodical = new Periodical(id, name, topic, cost, description,isDeleted);
+                    Periodical periodical = new Periodical(id, name, topic, cost, description, isDeleted);
                     periodicals.add(periodical);
                 }
             }
@@ -73,7 +74,7 @@ public class PeriodicalDAO {
                     double cost = resultSet.getDouble("cost");
                     String description = resultSet.getString("description");
                     boolean isDeleted = resultSet.getBoolean("isDeleted");
-                    Periodical periodical = new Periodical(id, periodicalName, topic, cost, description,isDeleted);
+                    Periodical periodical = new Periodical(id, periodicalName, topic, cost, description, isDeleted);
                     periodicals.add(periodical);
                 }
             }
@@ -96,7 +97,7 @@ public class PeriodicalDAO {
                     double cost = resultSet.getDouble("cost");
                     String description = resultSet.getString("description");
                     boolean isDeleted = resultSet.getBoolean("isDeleted");
-                    Periodical periodical = new Periodical(periodicalId, name, topic, cost, description,isDeleted);
+                    Periodical periodical = new Periodical(periodicalId, name, topic, cost, description, isDeleted);
                     periodicals.add(periodical);
                 }
             }
@@ -122,7 +123,7 @@ public class PeriodicalDAO {
                     String startDate = resultSet.getString("start_date");
                     String dueDate = resultSet.getString("due_date");
                     boolean isDeleted = resultSet.getBoolean("isDeleted");
-                    Periodical periodical = new Periodical(periodicalId, name, topic, cost, description,isDeleted);
+                    Periodical periodical = new Periodical(periodicalId, name, topic, cost, description, isDeleted);
                     Prepayment prepayment = new Prepayment(prepaymentId, startDate, dueDate, periodicalId, readerId);
                     info.put(periodical, prepayment);
                 }
@@ -153,7 +154,7 @@ public class PeriodicalDAO {
     }
 
     @SneakyThrows
-    public Map<Periodical, Prepayment> findPeriodicalsByNameByReaderId(String name, Long readerId){
+    public Map<Periodical, Prepayment> findPeriodicalsByNameByReaderId(String name, Long readerId) {
         String sql = "SELECT * FROM periodical JOIN prepayment ON periodical.id = prepayment.periodical_id WHERE reader_id =? AND name LIKE ? ORDER BY periodical.id";
         Map<Periodical, Prepayment> info = new HashMap<>();
         try (Connection connection = dataSource.getConnection();
@@ -171,7 +172,7 @@ public class PeriodicalDAO {
                     String startDate = resultSet.getString("start_date");
                     String dueDate = resultSet.getString("due_date");
                     boolean isDeleted = resultSet.getBoolean("isDeleted");
-                    Periodical periodical = new Periodical(periodicalId, periodicalName, topic, cost, description,isDeleted);
+                    Periodical periodical = new Periodical(periodicalId, periodicalName, topic, cost, description, isDeleted);
                     Prepayment prepayment = new Prepayment(prepaymentId, startDate, dueDate, periodicalId, readerId);
                     info.put(periodical, prepayment);
                 }
@@ -180,6 +181,29 @@ public class PeriodicalDAO {
         return info;
     }
 
+//    @SneakyThrows
+//    public List<Periodical> getPeriodicalsForSubscribing(Long readerId) {
+//        List<Periodical> periodicalsForSubscribe = new ArrayList<>();
+//        String sqlToGetPeriodicalsForSubscribing = "select * from periodical left join periodicals on periodicals.periodical_id = periodical.id where isDeleted = false and (reader_id <> ? or reader_id is null) group by id";
+//
+//        try (Connection connection = dataSource.getConnection();
+//             PreparedStatement preparedStatement = connection.prepareStatement(sqlToGetPeriodicalsForSubscribing)) {
+//            preparedStatement.setLong(1, readerId);
+//            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+//                while (resultSet.next()) {
+//                    long periodicalId = resultSet.getLong("periodical.id");
+//                    String periodicalName = resultSet.getString("name");
+//                    String topic = resultSet.getString("topic");
+//                    double cost = resultSet.getDouble("cost");
+//                    String description = resultSet.getString("description");
+//                    boolean isDeleted = resultSet.getBoolean("isDeleted");
+//                    Periodical periodical = new Periodical(periodicalId, periodicalName, topic, cost, description, isDeleted);
+//                    periodicalsForSubscribe.add(periodical);
+//                }
+//            }
+//        }
+//        return periodicalsForSubscribe;
+//    }
     @SneakyThrows
     public List<Periodical> getPeriodicalsForSubscribing(List<Long> listPeriodicalId) {
         List<Periodical> periodicalsForSubscribe = new ArrayList<>();
@@ -206,28 +230,56 @@ public class PeriodicalDAO {
     private String buildSqlToGetPeriodicalsForSubscribing(List<Long> listPeriodicalId) {
         StringBuilder sqlBuilder = new StringBuilder("SELECT distinct id, name, topic, cost, description, isDeleted FROM periodical");
         if (!listPeriodicalId.isEmpty()) {
-            sqlBuilder.append(" left join periodicals ON periodicals.periodical_id = periodical.id WHERE reader_id IS NULL OR ");
+            sqlBuilder.append(" left join periodicals ON periodicals.periodical_id = periodical.id WHERE (reader_id IS NULL OR ");
             Iterator<Long> iterator = listPeriodicalId.iterator();
             while (iterator.hasNext()) {
                 sqlBuilder.append("NOT periodical_id = ").append(iterator.next());
                 if (iterator.hasNext()) {
                     sqlBuilder.append(" and ");
                 } else {
-                    sqlBuilder.append(" and isDeleted = false");
+                    sqlBuilder.append(") and isDeleted = false");
                 }
             }
+        }else {
+            sqlBuilder.append(" left join periodicals ON periodicals.periodical_id = periodical.id WHERE isDeleted = false");
         }
         return sqlBuilder.toString();
     }
 
+//    @SneakyThrows
+//    public List<Periodical> findPeriodicalsForSubscribingByName(Long readerId, String name) {
+//        List<Periodical> periodicalsForSubscribe = new ArrayList<>();
+//        String sqlToGetPeriodicalsForSubscribing = "select * from periodical left join periodicals on periodicals.periodical_id= periodical.id where isDeleted = false and name like ? and (reader_id <> ? or reader_id is null) group by id";
+//
+//        try (Connection connection = dataSource.getConnection();
+//             PreparedStatement preparedStatement = connection.prepareStatement(sqlToGetPeriodicalsForSubscribing)) {
+//            preparedStatement.setString(1, "%" + name + "%");
+//            preparedStatement.setLong(2, readerId);
+//            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+//                while (resultSet.next()) {
+//                    long periodicalId = resultSet.getLong("periodical.id");
+//                    String periodicalName = resultSet.getString("name");
+//                    String topic = resultSet.getString("topic");
+//                    double cost = resultSet.getDouble("cost");
+//                    String description = resultSet.getString("description");
+//                    boolean isDeleted = resultSet.getBoolean("isDeleted");
+//                    Periodical periodical = new Periodical(periodicalId, periodicalName, topic, cost, description, isDeleted);
+//                    periodicalsForSubscribe.add(periodical);
+//                }
+//            }
+//        }
+//        return periodicalsForSubscribe;
+//    }
+
+
     @SneakyThrows
-    public List<Periodical> findPeriodicalsForSubscribingByName (List<Long> listPeriodicalId, String name) {
+    public List<Periodical> findPeriodicalsForSubscribingByName(List<Long> listPeriodicalId, String name) {
         List<Periodical> periodicalsForSubscribe = new ArrayList<>();
         String sqlToGetPeriodicalsForSubscribing = buildSqlToFindPeriodicalsForSubscribingByName(listPeriodicalId);
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlToGetPeriodicalsForSubscribing)) {
-            preparedStatement.setString(1,"%" + name + "%");
+            preparedStatement.setString(1, "%" + name + "%");
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
                     long perIdForSubs = resultSet.getLong("id");
@@ -236,7 +288,7 @@ public class PeriodicalDAO {
                     double cost = resultSet.getDouble("cost");
                     String description = resultSet.getString("description");
                     boolean isDeleted = resultSet.getBoolean("isDeleted");
-                    Periodical periodical = new Periodical(perIdForSubs, periodicalName, topic, cost, description,isDeleted);
+                    Periodical periodical = new Periodical(perIdForSubs, periodicalName, topic, cost, description, isDeleted);
                     periodicalsForSubscribe.add(periodical);
                 }
             }
@@ -244,17 +296,21 @@ public class PeriodicalDAO {
         return periodicalsForSubscribe;
     }
 
-    private String buildSqlToFindPeriodicalsForSubscribingByName (List<Long> listPeriodicalId) {
-        StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT id, name, topic, cost, description, isDeleted FROM periodical");
+    private String buildSqlToFindPeriodicalsForSubscribingByName(List<Long> listPeriodicalId) {
+        StringBuilder sqlBuilder = new StringBuilder("SELECT distinct id, name, topic, cost, description, isDeleted FROM periodical");
         if (!listPeriodicalId.isEmpty()) {
-            sqlBuilder.append(" LEFT JOIN periodicals ON periodicals.periodical_id = periodical.id WHERE periodical.name like ? and periodical.isDeleted = false or periodicals.reader_id IS NULL AND ");
+            sqlBuilder.append(" left join periodicals ON periodicals.periodical_id = periodical.id WHERE (reader_id IS NULL OR ");
             Iterator<Long> iterator = listPeriodicalId.iterator();
             while (iterator.hasNext()) {
                 sqlBuilder.append("NOT periodical_id = ").append(iterator.next());
                 if (iterator.hasNext()) {
-                    sqlBuilder.append(" AND ");
+                    sqlBuilder.append(" and ");
+                } else {
+                    sqlBuilder.append(") and isDeleted = false and name like ?");
                 }
             }
+        }else {
+            sqlBuilder.append(" left join periodicals ON periodicals.periodical_id = periodical.id WHERE name like ? and isDeleted = false");
         }
         return sqlBuilder.toString();
     }

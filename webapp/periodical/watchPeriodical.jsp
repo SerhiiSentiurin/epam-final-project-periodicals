@@ -1,88 +1,88 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<!DOCTYPE html>
- <html>
-     <head>
-         <title>Watch all periodicals</title>
-         <meta charset="UTF-8">
-     </head>
-     <body>
+<%@ taglib uri="/WEB-INF/tag/language.tld" prefix="lang" %>
+<html>
+    <head>
+        <title>Reader page</title>
+        <meta charset="UTF-8">
+    </head>
+    <body>
 
-         <form action = "/app/periodicals/periodical/watchByTopic" method = "GET">
-          <label for="topic">Find periodical by topic:</label>
-             <select name="topic">
-                <option value="business">business</option>
-                <option value="sport" selected>sport</option>
-                <option value="technology">technology</option>
-             </select>
-         <button type ="submit">Search</button>
-         </form>
+        <form action = "/app/periodicals/periodical/watchByTopic" method = "GET">
+            <label for="topic"><lang:print message = "periodical.periodicalForSubscribing.jsp.label.find_periodical_by_topic"/>:</label>
+            <select name="topic">
+                <option value="business"><lang:print message = "periodical.periodicalForSubscribing.jsp.option.business"/></option>
+                <option value="sport" selected><lang:print message = "periodical.periodicalForSubscribing.jsp.option.sport"/></option>
+                <option value="technology"><lang:print message = "periodical.periodicalForSubscribing.jsp.option.technology"/></option>
+            </select>
+            <button type ="submit"><lang:print message = "periodical.periodicalForSubscribing.jsp.button.search"/></button>
+        </form>
 
-         <form action = "/app/periodicals/periodical/findByName" method ="GET">
-            <label for="name">Find periodical by name:</label>
+        <form action = "/app/periodicals/periodical/findByName" method ="GET">
+            <label for="name"><lang:print message = "periodical.periodicalForSubscribing.jsp.label.find_periodical_by_name"/>:</label>
             <input type="text" name="name" required >
-            <input type="submit" value='Search'>
-         </form>
-<br>
-         <form action = "/app/periodicals/periodical/sortByCost" method ="GET">
-            <label for="name">Sort periodicals by cost:</label><br>
+            <input type="submit" value='<lang:print message = "periodical.periodicalForSubscribing.jsp.button.search"/>'>
+        </form><br>
+
+        <form action = "/app/periodicals/periodical/sortByCost" method ="GET">
+            <label for="name"><lang:print message = "periodical.watchPeriodical.jsp.label.sort_periodicals_by_cost"/>:</label><br>
             <input type = "hidden" name="topic" value = "${topic}"/>
             <input type = "hidden" name="name" value = "${name}"/>
-            <input type = "submit" value ='Sort'>
-            <input type = "submit" formaction="/app/periodicals/periodical/reversedSortByCost" value='Reverse Sort'>
-         </form>
+            <input type = "submit" value ='<lang:print message = "periodical.watchPeriodical.jsp.button.sort"/>'>
+            <input type = "submit" formaction="/app/periodicals/periodical/reversedSortByCost" value='<lang:print message = "periodical.watchPeriodical.jsp.button.reversed_sort"/>'>
+        </form>
 
-         <form action ="/app/periodicals/periodical/sortByName" method = "GET">
-            <label for="name">Sort periodicals by name:</label><br>
+        <form action ="/app/periodicals/periodical/sortByName" method = "GET">
+            <label for="name"><lang:print message = "periodical.watchPeriodical.jsp.label.sort_periodicals_by_name"/>:</label><br>
             <input type = "hidden" name="topic" value = "${topic}"/>
             <input type = "hidden" name="name" value = "${name}"/>
-            <input type = "submit" value ='Sort'>
-            <input type = "submit" formaction="/app/periodicals/periodical/reversedSortByName" value='Reverse Sort'>
-         </form>
+            <input type = "submit" value ='<lang:print message = "periodical.watchPeriodical.jsp.button.sort"/>'>
+            <input type = "submit" formaction="/app/periodicals/periodical/reversedSortByName" value='<lang:print message = "periodical.watchPeriodical.jsp.button.reversed_sort"/>'>
+        </form>
 
+        <form accept-charset="UTF-8" method="GET" action="/app/periodicals/periodical/watch">
+            <label for="name"><lang:print message = "periodical.watchPeriodical.jsp.label.click_to_see_all_periodicals"/>:</label>
+            <input type = "submit"  value='<lang:print message = "periodical.watchPeriodical.jsp.button.all_periodicals"/>'>
+            <br><br>
+        </form>
 
-         <form accept-charset="UTF-8" method="GET" action="/app/periodicals/periodical/watch">
-            <label for="name">Click to see all periodicals:</label>
-            <input type = "submit"  value='All periodicals'/><br><br>
-         </form>
-
-        <button onclick="location.href='/app'">Back to registration</button>
+        <button onclick="location.href='/app'"><lang:print message = "periodical.watchPeriodical.jsp.button.back_to_registration"/></button>
 
         <table id="listOfPeriodicals">
-        <caption>Periodicals</caption>
+        <caption><lang:print message = "periodical.watchPeriodical.jsp.table.caption.periodicals"/></caption>
             <tr>
-                <th>Name</th>
-                <th>Topic</th>
-                <th>Cost</th>
-                <th>Description</th>
+                <th><lang:print message = "periodical.periodicalForSubscribing.jsp.table.name"/></th>
+                <th><lang:print message = "periodical.periodicalForSubscribing.jsp.table.topic"/></th>
+                <th><lang:print message = "periodical.periodicalForSubscribing.jsp.table.cost"/></th>
+                <th><lang:print message = "periodical.periodicalForSubscribing.jsp.table.description"/></th>
             </tr>
-            <c:forEach items="${periodicals}" var="periodical">
-                <tr>
-                    <td>${periodical.name}</td>
-                    <td>${periodical.topic}</td>
-                    <td>${periodical.cost}</td>
-                    <td>${periodical.description}</td>
-                </tr>
-            </c:forEach>
+        <c:forEach items="${periodicals}" var="periodical">
+            <tr>
+                <td>${periodical.name}</td>
+                <td>${periodical.topic}</td>
+                <td>${periodical.cost}</td>
+                <td>${periodical.description}</td>
+            </tr>
+        </c:forEach>
         </table>
 
         <style>
-                 caption {
-                   font-family: annabelle;
-                   font-weight: bold;
-                   font-size: 1.5em;
-                   padding: 10px;
-                   border: 1px solid #A9E2CC;
-                  }
-                 th {
-                   padding: 10px;
-                   border: 1px solid #A9E2CC;
-                 }
-                 td {
-                   font-size: 1.0em;
-                   padding: 5px 7px;
-                   border: 1px solid #A9E2CC;
-                 }
+            caption {
+                font-family: annabelle;
+                font-weight: bold;
+                font-size: 1.5em;
+                padding: 10px;
+                border: 1px solid #A9E2CC;
+            }
+            th {
+                padding: 10px;
+                border: 1px solid #A9E2CC;
+            }
+            td {
+                font-size: 1.0em;
+                padding: 5px 7px;
+                border: 1px solid #A9E2CC;
+            }
         </style>
     </body>
 </html>

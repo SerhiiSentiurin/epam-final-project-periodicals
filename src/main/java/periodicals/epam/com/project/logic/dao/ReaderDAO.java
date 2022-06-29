@@ -79,7 +79,7 @@ public class ReaderDAO {
         } catch (Exception e) {
             rollback(connection);
             log.error(e.getMessage());
-            throw new ReaderException("Transaction failed with create reader!");
+            throw new ReaderException("Cannot create reader! Try to insert another login or password");
         } finally {
             close(preparedStatement);
             close(connection);

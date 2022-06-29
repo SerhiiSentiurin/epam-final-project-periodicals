@@ -1,33 +1,33 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<!DOCTYPE html>
- <html>
+<%@ taglib uri="/WEB-INF/tag/language.tld" prefix="lang" %>
+<html>
+    <head>
+        <title>Admin page</title>
+        <meta charset="UTF-8">
+    </head>
     <body>
-        <c:if test = "${sessionScope.user.userRole == 'ADMIN'}">
-            <jsp:text>
-                Welcome: ${sessionScope.user.login}
-            </jsp:text>
-            <br><br>
+        <p>
+            <lang:print message = "admin.adminHome.jsp.welcome_home_page"/>, ${sessionScope.user.login}
+        </p>
 
+        <p>
+            <form action = "/app/periodicals/admin/managePeriodicals" method = "GET">
+                <input type = "submit" value = '<lang:print message = "admin.adminHome.jsp.button.manage_periodicals"/>'>
+            </form><br>
+        </p>
 
-        <form action = "/app/periodicals/admin/managePeriodicals" method = "GET">
-            <input type = "submit" value = 'Manage periodicals'>
-        </form><br><br>
+        <p>
+            <form action = "/app/periodicals/admin/manageReaders" method = "GET">
+                <input type = "submit" value = '<lang:print message = "admin.adminHome.jsp.button.manage_readers"/>'>
+            </form><br>
+        </p>
 
-        <form action = "/app/periodicals/admin/manageReaders" method = "GET">
-            <input type = "submit" value = 'Manage Readers'>
-        </form><br><br>
-
-        <form action = "/app/periodicals/logout" method = "POST">
-            <input type = "submit" value = 'Logout'>
-        </form><br><br>
-        </c:if>
-
-        <c:if test = "${sessionScope.user.userRole == 'READER'}">
-        <jsp:text>
-            Forbidden!
-        </jsp:text>
-        </c:if>
+        <p>
+            <form action = "/app/periodicals/logout" method = "POST">
+                <input type = "submit" value = '<lang:print message = "admin.adminHome.jsp.button.logout"/>'>
+            </form><br>
+        </p>
     </body>
 
- </html>
+</html>

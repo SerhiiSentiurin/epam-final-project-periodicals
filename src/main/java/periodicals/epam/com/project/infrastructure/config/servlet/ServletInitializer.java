@@ -2,12 +2,11 @@ package periodicals.epam.com.project.infrastructure.config.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jakarta.servlet.ServletContainerInitializer;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRegistration;
+import jakarta.servlet.*;
 import liquibase.pro.packaged.P;
 import lombok.extern.log4j.Log4j2;
+import periodicals.epam.com.project.infrastructure.web.filter.encoding.EncodingFilter;
+import periodicals.epam.com.project.infrastructure.web.filter.security.SecurityFilter;
 import periodicals.epam.com.project.logic.controller.*;
 import periodicals.epam.com.project.logic.dao.*;
 import periodicals.epam.com.project.infrastructure.config.ConfigLoader;
@@ -20,20 +19,33 @@ import periodicals.epam.com.project.logic.services.*;
 
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Log4j2
 public class ServletInitializer implements ServletContainerInitializer {
     @Override
     public void onStartup(Set<Class<?>> set, ServletContext servletContext) throws ServletException {
+
+        servletContext.addListener(buildLocaleSessionListener());
+
+        FilterRegistration.Dynamic security = servletContext.addFilter("security", new SecurityFilter());
+        security.addMappingForUrlPatterns(null, false, "/*");
+        FilterRegistration.Dynamic encoding = servletContext.addFilter("encoding", new EncodingFilter());
+        encoding.addMappingForUrlPatterns(null, false, "/*");
+
         FrontServlet frontServlet = createFrontServlet();
         ServletRegistration.Dynamic dynamic = servletContext.addServlet(frontServlet.getServletName(), frontServlet);
         dynamic.setLoadOnStartup(0);
         dynamic.addMapping("/periodicals/*");
         log.info("front servlet start up");
+    }
+
+    private LocaleSessionListener buildLocaleSessionListener() {
+        List<Locale> locales = new ArrayList<>();
+        Locale selectedLocale = new Locale("en");
+        locales.add(selectedLocale);
+        locales.add(new Locale("ua"));
+        return new LocaleSessionListener(locales, selectedLocale);
     }
 
     private FrontServlet createFrontServlet() {
@@ -58,6 +70,7 @@ public class ServletInitializer implements ServletContainerInitializer {
         UserController userController = createUserController(queryParameterHandler, dataSource);
         placeholders.add(new Placeholder("POST", "login", userController::login));
         placeholders.add(new Placeholder("POST", "logout", userController::logout));
+        placeholders.add(new Placeholder("POST", "changeLocale", userController::changeLocale));
 
         PeriodicalService periodicalService = getPeriodicalService(dataSource);
         ReaderService readerService = getReaderService(dataSource);

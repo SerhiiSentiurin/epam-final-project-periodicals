@@ -1,60 +1,62 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<!DOCTYPE html>
+<%@ taglib uri="/WEB-INF/tag/language.tld" prefix="lang" %>
 <html>
     <head>
-        <title>Welcome page.</title>
+        <title>Reader page</title>
         <meta charset="UTF-8">
     </head>
     <body>
 
         <c:if test="${periodicals.size() == 0}" >
-            <p>You have subscribed all periodicals</p>
+            <p>
+                <lang:print message = "periodical.periodicalForSubscribing.jsp.you_have_subscribed_all_periodicals"/>
+            </p>
         </c:if>
         <c:if test="${periodicals.size() > 0}" >
 
         <form action = "/app/periodicals/periodical/getByTopicPeriodicalsForSubscribing" method = "GET">
-            <label for="topic">Find periodical by topic:</label>
+            <label for="topic"><lang:print message = "periodical.periodicalForSubscribing.jsp.label.find_periodical_by_topic"/>:</label>
             <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
                 <select name="topic">
-                    <option value="business">business</option>
-                    <option value="sport" selected>sport</option>
-                    <option value="technology">technology</option>
+                    <option value="business"><lang:print message = "periodical.periodicalForSubscribing.jsp.option.business"/></option>
+                    <option value="sport" selected><lang:print message = "periodical.periodicalForSubscribing.jsp.option.sport"/></option>
+                    <option value="technology"><lang:print message = "periodical.periodicalForSubscribing.jsp.option.technology"/></option>
                 </select>
-            <button type ="submit">Search</button>
+            <button type ="submit"><lang:print message = "periodical.periodicalForSubscribing.jsp.button.search"/></button>
         </form>
         <br>
 
         <form action = "/app/periodicals/periodical/findByNamePeriodicalsForSubscribing" method ="GET">
             <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
-            <label for="name">Find periodical by name:</label>
+            <label for="name"><lang:print message = "periodical.periodicalForSubscribing.jsp.label.find_periodical_by_name"/>:</label>
             <input type="text" name="name" required>
-            <input type="submit" value='Search'>
+            <input type="submit" value='<lang:print message = "periodical.periodicalForSubscribing.jsp.button.search"/>'>
         </form>
         <br><br>
 
-        <button onclick="sortName(false)">Sort by name</button>
-        <button onclick="sortName(true)">reversed sort by name</button>
+        <button onclick="sortName(false)"><lang:print message = "periodical.periodicalForSubscribing.jsp.button.sort_by_name"/></button>
+        <button onclick="sortName(true)"><lang:print message = "periodical.periodicalForSubscribing.jsp.button.reversed_sort_by_name"/></button>
         <br><br>
-        <button onclick="sortPrice(false)">sort by cost</button>
-        <button onclick="sortPrice(true)">reversed sort by cost</button>
+        <button onclick="sortPrice(false)"><lang:print message = "periodical.periodicalForSubscribing.jsp.button.sort_by_cost"/></button>
+        <button onclick="sortPrice(true)"><lang:print message = "periodical.periodicalForSubscribing.jsp.button.reversed_sort_by_cost"/></button>
         <br><br>
 
         <form action = "/app/periodicals/periodical/periodicalsForSubscribing" method = "GET">
-            <label for="name">Click to reset sorting</label><br>
+            <label for="name"><lang:print message = "periodical.periodicalForSubscribing.jsp.label.click_to_reset_sorting"/></label><br>
                 <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
-                <input type = "submit" value ='Reset'>
+                <input type = "submit" value ='<lang:print message = "periodical.periodicalForSubscribing.jsp.button.reset"/>'>
         </form>
 
             <table id="periodicalsForSubscribing">
-                <caption>Periodicals you have not subscribed yet</caption>
+                <caption><lang:print message = "periodical.periodicalForSubscribing.jsp.table.caption.periodicals_you_have_not_subscribed_yet"/></caption>
                     <tr>
-                        <th>Name</th>
-                        <th>Topic</th>
-                        <th>Cost</th>
-                        <th>Description</th>
+                        <th><lang:print message = "periodical.periodicalForSubscribing.jsp.table.name"/></th>
+                        <th><lang:print message = "periodical.periodicalForSubscribing.jsp.table.topic"/></th>
+                        <th><lang:print message = "periodical.periodicalForSubscribing.jsp.table.cost"/></th>
+                        <th><lang:print message = "periodical.periodicalForSubscribing.jsp.table.description"/></th>
                         <c:if test="${reader.lock == 'false'}" >
-                        <th>Choose subscribe period!</th>
+                        <th><lang:print message = "periodical.periodicalForSubscribing.jsp.table.choose_subscribe_period"/></th>
                         </c:if>
                     </tr>
                 <c:forEach items="${periodicals}" var="periodical">
@@ -69,10 +71,10 @@
                                 <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
                                 <input type = "hidden" name = "periodicalId" value = "${periodical.id}">
                                     <select name="durationOfSubscription">
-                                        <option value="30">Subscription for 30 days!</option>
-                                        <option value="365" selected>Subscription for 365 days!(with 10% discount)</option>
+                                        <option value="30"><lang:print message = "periodical.periodicalForSubscribing.jsp.table.option.subscription_for_30_days"/></option>
+                                        <option value="365" selected><lang:print message = "periodical.periodicalForSubscribing.jsp.table.option.subscription_for_365_days"/></option>
                                     </select>
-                                <input type = "submit" value ='Subscribe'>
+                                <input type = "submit" value ='<lang:print message = "periodical.periodicalForSubscribing.jsp.button.subscribe"/>'>
                             </form>
                         </td>
                         </c:if>
@@ -82,7 +84,7 @@
         </c:if>
 
 
-    <button onclick="location.href='/app/reader/readerHome.jsp'"> Back home </button>
+    <button onclick="location.href='/app/reader/readerHome.jsp'"><lang:print message = "periodical.periodicalForSubscribing.jsp.button.back_home"/></button>
 
         <style>
             caption {
