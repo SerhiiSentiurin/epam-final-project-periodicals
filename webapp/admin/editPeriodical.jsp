@@ -19,7 +19,7 @@
                 <tr>
                     <td><textarea name = "name" form = "edit" rows = "12" cols="25" wrap="soft" required >${periodical.name}</textarea></td>
                     <td><textarea name="topic" form = "edit" rows="12" cols="25" wrap="soft" required >${periodical.topic}</textarea></td>
-                    <td><input form = "edit" type = "number" name = "cost" min = "0" value = "${periodical.cost}" required></td>
+                    <td><input form = "edit" type = "number" name = "cost" min = "0" step = 0.01 value = "${periodical.cost}" required></td>
                     <td><textarea name="description" form = "edit" rows="12" cols="150" wrap="soft" required >${periodical.description}</textarea></td>
                     <td>
                         <form action = "/app/periodicals/admin/editPeriodical" method = "POST" id = "edit">

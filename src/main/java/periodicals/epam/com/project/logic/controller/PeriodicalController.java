@@ -3,7 +3,6 @@ package periodicals.epam.com.project.logic.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import periodicals.epam.com.project.infrastructure.web.ModelAndView;
-import periodicals.epam.com.project.infrastructure.web.QueryParameterHandler;
 import periodicals.epam.com.project.logic.entity.Periodical;
 import periodicals.epam.com.project.logic.entity.Prepayment;
 import periodicals.epam.com.project.logic.entity.Reader;
@@ -19,11 +18,10 @@ import java.util.Map;
 public class PeriodicalController {
     private final PeriodicalService periodicalService;
     private final ReaderService readerService;
-    private final QueryParameterHandler queryParameterHandler;
 
 
-    public ModelAndView getAllPeriodical(HttpServletRequest request) {
-        List<Periodical> allPeriodical = periodicalService.getAllPeriodical();
+    public ModelAndView getAllPeriodicals(HttpServletRequest request) {
+        List<Periodical> allPeriodical = periodicalService.getAllPeriodicals();
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setView("/periodical/watchPeriodical.jsp");
         modelAndView.addAttribute("periodicals", allPeriodical);
@@ -39,7 +37,7 @@ public class PeriodicalController {
         return modelAndView;
     }
 
-    public ModelAndView findPeriodicalByName(HttpServletRequest request) {
+    public ModelAndView getPeriodicalByName(HttpServletRequest request) {
         String name = request.getParameter("name");
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addAttribute("periodicals", periodicalService.getPeriodicalByName(name));

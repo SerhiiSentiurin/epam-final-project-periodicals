@@ -17,11 +17,11 @@ public class PeriodicalDAO {
 
     @SneakyThrows
     public List<Periodical> getAllPeriodicals() {
-        String query = "SELECT * FROM periodical";
+        String getAllPeriodicals = "SELECT * FROM periodical";
         List<Periodical> listOfPeriodicals = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
              Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
+             ResultSet resultSet = statement.executeQuery(getAllPeriodicals)) {
             while (resultSet.next()) {
                 long id = resultSet.getLong("id");
                 String name = resultSet.getString("name");
@@ -107,10 +107,10 @@ public class PeriodicalDAO {
 
     @SneakyThrows
     public Map<Periodical, Prepayment> getPeriodicalsByTopicByReaderId(String topic, Long readerId) {
-        String sql = "SELECT * FROM periodical JOIN prepayment ON periodical.id = prepayment.periodical_id WHERE reader_id =? AND topic =? ORDER BY periodical.id";
+        String getPeriodicalByTopicByReaderId = "SELECT * FROM periodical JOIN prepayment ON periodical.id = prepayment.periodical_id WHERE reader_id =? AND topic =? ORDER BY periodical.id";
         Map<Periodical, Prepayment> info = new HashMap<>();
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(getPeriodicalByTopicByReaderId)) {
             preparedStatement.setLong(1, readerId);
             preparedStatement.setString(2, topic);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -134,7 +134,7 @@ public class PeriodicalDAO {
 
     @SneakyThrows
     public List<Prepayment> getPrepaymentsByReaderId(Long readerId) {
-        String selectPeriodicalsByReaderId = "SELECT prepayment.id, start_date, due_date, periodical_id FROM periodical JOIN prepayment ON periodical.id = prepayment.periodical_id WHERE reader_id =? ORDER BY periodical_id;";
+        String selectPeriodicalsByReaderId = "SELECT prepayment.id, start_date, due_date, periodical_id FROM periodical JOIN prepayment ON periodical.id = prepayment.periodical_id WHERE reader_id =? ORDER BY periodical_id";
         List<Prepayment> prepayments = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(selectPeriodicalsByReaderId)) {
@@ -155,10 +155,10 @@ public class PeriodicalDAO {
 
     @SneakyThrows
     public Map<Periodical, Prepayment> findPeriodicalsByNameByReaderId(String name, Long readerId) {
-        String sql = "SELECT * FROM periodical JOIN prepayment ON periodical.id = prepayment.periodical_id WHERE reader_id =? AND name LIKE ? ORDER BY periodical.id";
+        String findPeriodicalsByNameByReaderId = "SELECT * FROM periodical JOIN prepayment ON periodical.id = prepayment.periodical_id WHERE reader_id =? AND name LIKE ? ORDER BY periodical.id";
         Map<Periodical, Prepayment> info = new HashMap<>();
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(findPeriodicalsByNameByReaderId)) {
             preparedStatement.setLong(1, readerId);
             preparedStatement.setString(2, "%" + name + "%");
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -181,29 +181,6 @@ public class PeriodicalDAO {
         return info;
     }
 
-//    @SneakyThrows
-//    public List<Periodical> getPeriodicalsForSubscribing(Long readerId) {
-//        List<Periodical> periodicalsForSubscribe = new ArrayList<>();
-//        String sqlToGetPeriodicalsForSubscribing = "select * from periodical left join periodicals on periodicals.periodical_id = periodical.id where isDeleted = false and (reader_id <> ? or reader_id is null) group by id";
-//
-//        try (Connection connection = dataSource.getConnection();
-//             PreparedStatement preparedStatement = connection.prepareStatement(sqlToGetPeriodicalsForSubscribing)) {
-//            preparedStatement.setLong(1, readerId);
-//            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-//                while (resultSet.next()) {
-//                    long periodicalId = resultSet.getLong("periodical.id");
-//                    String periodicalName = resultSet.getString("name");
-//                    String topic = resultSet.getString("topic");
-//                    double cost = resultSet.getDouble("cost");
-//                    String description = resultSet.getString("description");
-//                    boolean isDeleted = resultSet.getBoolean("isDeleted");
-//                    Periodical periodical = new Periodical(periodicalId, periodicalName, topic, cost, description, isDeleted);
-//                    periodicalsForSubscribe.add(periodical);
-//                }
-//            }
-//        }
-//        return periodicalsForSubscribe;
-//    }
     @SneakyThrows
     public List<Periodical> getPeriodicalsForSubscribing(List<Long> listPeriodicalId) {
         List<Periodical> periodicalsForSubscribe = new ArrayList<>();
@@ -246,32 +223,6 @@ public class PeriodicalDAO {
         return sqlBuilder.toString();
     }
 
-//    @SneakyThrows
-//    public List<Periodical> findPeriodicalsForSubscribingByName(Long readerId, String name) {
-//        List<Periodical> periodicalsForSubscribe = new ArrayList<>();
-//        String sqlToGetPeriodicalsForSubscribing = "select * from periodical left join periodicals on periodicals.periodical_id= periodical.id where isDeleted = false and name like ? and (reader_id <> ? or reader_id is null) group by id";
-//
-//        try (Connection connection = dataSource.getConnection();
-//             PreparedStatement preparedStatement = connection.prepareStatement(sqlToGetPeriodicalsForSubscribing)) {
-//            preparedStatement.setString(1, "%" + name + "%");
-//            preparedStatement.setLong(2, readerId);
-//            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-//                while (resultSet.next()) {
-//                    long periodicalId = resultSet.getLong("periodical.id");
-//                    String periodicalName = resultSet.getString("name");
-//                    String topic = resultSet.getString("topic");
-//                    double cost = resultSet.getDouble("cost");
-//                    String description = resultSet.getString("description");
-//                    boolean isDeleted = resultSet.getBoolean("isDeleted");
-//                    Periodical periodical = new Periodical(periodicalId, periodicalName, topic, cost, description, isDeleted);
-//                    periodicalsForSubscribe.add(periodical);
-//                }
-//            }
-//        }
-//        return periodicalsForSubscribe;
-//    }
-
-
     @SneakyThrows
     public List<Periodical> findPeriodicalsForSubscribingByName(List<Long> listPeriodicalId, String name) {
         List<Periodical> periodicalsForSubscribe = new ArrayList<>();
@@ -304,23 +255,23 @@ public class PeriodicalDAO {
             while (iterator.hasNext()) {
                 sqlBuilder.append("NOT periodical_id = ").append(iterator.next());
                 if (iterator.hasNext()) {
-                    sqlBuilder.append(" and ");
+                    sqlBuilder.append(" AND ");
                 } else {
-                    sqlBuilder.append(") and isDeleted = false and name like ?");
+                    sqlBuilder.append(") AND isDeleted = false AND name LIKE ?");
                 }
             }
         }else {
-            sqlBuilder.append(" left join periodicals ON periodicals.periodical_id = periodical.id WHERE name like ? and isDeleted = false");
+            sqlBuilder.append(" LEFT JOIN periodicals ON periodicals.periodical_id = periodical.id WHERE name LIKE ? AND isDeleted = false");
         }
         return sqlBuilder.toString();
     }
 
     @SneakyThrows
     public List<Long> getPeriodicalIdByReaderId(Long readerId) {
-        String query = "SELECT periodical_id FROM periodicals WHERE reader_id = ? order by periodical_id";
+        String getPeriodicalIdByReaderId = "SELECT periodical_id FROM periodicals WHERE reader_id = ? order by periodical_id";
         List<Long> listOfPeriodicalId = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(getPeriodicalIdByReaderId)) {
             preparedStatement.setLong(1, readerId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {

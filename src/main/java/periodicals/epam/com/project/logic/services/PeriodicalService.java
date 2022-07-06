@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class PeriodicalService {
     private final PeriodicalDAO periodicalDAO;
 
-    public List<Periodical> getAllPeriodical() {
+    public List<Periodical> getAllPeriodicals() {
         return periodicalDAO.getAllPeriodicals();
     }
 

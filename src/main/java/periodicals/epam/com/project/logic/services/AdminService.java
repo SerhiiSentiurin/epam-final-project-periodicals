@@ -12,43 +12,43 @@ import java.util.List;
 public class AdminService {
     private final AdminDAO adminDAO;
 
-    public List<Periodical> getAllPeriodicals(){
+    public List<Periodical> getAllPeriodicals() {
         return adminDAO.getAllPeriodicals();
     }
 
-    public boolean createNewPeriodical(PeriodicalDTO dto){
+    public boolean createNewPeriodical(PeriodicalDTO dto) {
         return adminDAO.createNewPeriodical(dto);
     }
 
-    public boolean deletePeriodicalByPeriodicalId(Long periodicalId){
+    public boolean deletePeriodicalByPeriodicalId(Long periodicalId) {
         return adminDAO.deletePeriodicalByPeriodicalId(periodicalId);
     }
 
-    public boolean deletePeriodicalForReaders(Long periodicalId){
+    public boolean deletePeriodicalForReaders(Long periodicalId) {
         return adminDAO.deletePeriodicalForReaders(periodicalId);
     }
 
-    public boolean restorePeriodicalForReaders(Long periodicalId){
+    public boolean restorePeriodicalForReaders(Long periodicalId) {
         return adminDAO.restorePeriodicalForReaders(periodicalId);
     }
 
-    public Periodical getPeriodicalById(Long periodicalId){
+    public Periodical getPeriodicalById(Long periodicalId) {
         return adminDAO.getPeriodicalById(periodicalId);
     }
 
-    public boolean editPeriodicalById(PeriodicalDTO dto){
+    public boolean editPeriodicalById(PeriodicalDTO dto) {
         return adminDAO.editPeriodicalById(dto);
     }
 
-    public List<Reader> getAllReaders(){
+    public List<Reader> getAllReaders() {
         return adminDAO.getAllReaders();
     }
 
-    public boolean lockReader(Long readerId){
+    public boolean lockReader(Long readerId) {
         return adminDAO.lockReader(readerId);
     }
 
-    public boolean unlockReader(Long readerId){
+    public boolean unlockReader(Long readerId) {
         return adminDAO.unlockReader(readerId);
     }
 }

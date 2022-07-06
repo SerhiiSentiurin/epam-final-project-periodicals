@@ -8,7 +8,7 @@ import periodicals.epam.com.project.logic.entity.dto.AccountDTO;
 public class AccountService {
     private final AccountDAO accountDAO;
 
-    public boolean topUpAccountAmount(AccountDTO accountDTO){
+    public AccountDTO topUpAccountAmount(AccountDTO accountDTO){
         return accountDAO.topUpAccountAmount(accountDTO);
     }
 

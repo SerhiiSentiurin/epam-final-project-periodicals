@@ -9,7 +9,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class Reader extends User {
     private Account account; //cчёт
-    private List<Periodical> periodicals;
+   // private List<Periodical> periodicals;
     private boolean lock;
 
     public Reader() {

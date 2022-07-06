@@ -15,19 +15,21 @@ import java.sql.ResultSet;
 @RequiredArgsConstructor
 public class AccountDAO {
     private final DataSource dataSource;
+
     @SneakyThrows
-    public boolean topUpAccountAmount(AccountDTO dto) {
+    public AccountDTO topUpAccountAmount(AccountDTO dto) {
         String sql = "UPDATE account INNER JOIN reader ON account.id = reader.account_id SET account.amount = ? WHERE reader.id = ?";
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setDouble(1, dto.getAmountOfMoney() + getAmountOfMoneyByReaderId(dto));
             preparedStatement.setLong(2, dto.getReaderId());
-            return preparedStatement.execute();
+            preparedStatement.execute();
         }
+        return dto;
     }
 
     @SneakyThrows
-    public Double getAmountOfMoneyByReaderId (AccountDTO dto){
+    public Double getAmountOfMoneyByReaderId(AccountDTO dto) {
         String selectAccountAmount = "SELECT account.id, amount FROM account JOIN reader ON reader.account_id = account.id WHERE reader.id = ?";
         Account readerAccount = new Account();
         try (Connection connection = dataSource.getConnection();

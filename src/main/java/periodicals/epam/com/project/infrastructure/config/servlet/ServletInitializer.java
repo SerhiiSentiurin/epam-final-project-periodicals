@@ -3,7 +3,6 @@ package periodicals.epam.com.project.infrastructure.config.servlet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.*;
-import liquibase.pro.packaged.P;
 import lombok.extern.log4j.Log4j2;
 import periodicals.epam.com.project.infrastructure.web.filter.encoding.EncodingFilter;
 import periodicals.epam.com.project.infrastructure.web.filter.security.SecurityFilter;
@@ -78,7 +77,7 @@ public class ServletInitializer implements ServletContainerInitializer {
         PrepaymentService prepaymentService = getPrepaymentService(dataSource);
         AdminService adminService = getAdminService(dataSource);
 
-        PeriodicalController periodicalController = createPeriodicalController(queryParameterHandler, periodicalService, readerService);
+        PeriodicalController periodicalController = createPeriodicalController(periodicalService, readerService);
         ReaderController readerController = createReaderController(queryParameterHandler, periodicalService, readerService);
         AccountController accountController = createAccountController(queryParameterHandler, accountService);
         PrepaymentController prepaymentController = createPrepaymentController(queryParameterHandler, prepaymentService);
@@ -87,9 +86,9 @@ public class ServletInitializer implements ServletContainerInitializer {
         placeholders.add(new Placeholder("POST", "prepayment/addSubscription", prepaymentController::addSubscription));
         placeholders.add(new Placeholder("POST", "reader/create", readerController::createReader));
         placeholders.add(new Placeholder("GET", "reader", readerController::getReaderById));
-        placeholders.add(new Placeholder("GET", "periodical/watch", periodicalController::getAllPeriodical));
+        placeholders.add(new Placeholder("GET", "periodical/watch", periodicalController::getAllPeriodicals));
         placeholders.add(new Placeholder("GET", "periodical/watchByTopic", periodicalController::getPeriodicalsByTopic));
-        placeholders.add(new Placeholder("GET", "periodical/findByName", periodicalController::findPeriodicalByName));
+        placeholders.add(new Placeholder("GET", "periodical/findByName", periodicalController::getPeriodicalByName));
         placeholders.add(new Placeholder("GET", "periodical/sortByCost", periodicalController::sortPeriodicalsByCost));
         placeholders.add(new Placeholder("GET", "periodical/reversedSortByCost", periodicalController::reversedSortPeriodicalsByCost));
         placeholders.add(new Placeholder("GET", "periodical/sortByName", periodicalController::sortPeriodicalsByName));
@@ -126,8 +125,8 @@ public class ServletInitializer implements ServletContainerInitializer {
         return new ReaderController(readerService, periodicalService, queryParameterHandler);
     }
 
-    private PeriodicalController createPeriodicalController(QueryParameterHandler queryParameterHandler, PeriodicalService periodicalService, ReaderService readerService) {
-        return new PeriodicalController(periodicalService, readerService, queryParameterHandler);
+    private PeriodicalController createPeriodicalController(PeriodicalService periodicalService, ReaderService readerService) {
+        return new PeriodicalController(periodicalService, readerService);
     }
 
     private AccountController createAccountController(QueryParameterHandler queryParameterHandler, AccountService accountService) {

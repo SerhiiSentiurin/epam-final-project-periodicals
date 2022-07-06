@@ -1,7 +1,6 @@
 package periodicals.epam.com.project.infrastructure.web.filter.security;
 
 
-
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,16 +24,16 @@ public class SecurityFilter implements Filter {
 
         pathMatchers.add(new RequestMatcher("/admin/adminHome.jsp", UserRole.ADMIN));
         pathMatchers.add(new RequestMatcher("/periodicals/admin/managePeriodicals", UserRole.ADMIN));
-        pathMatchers.add(new RequestMatcher("/periodicals/admin/manageReaders",UserRole.ADMIN));
+        pathMatchers.add(new RequestMatcher("/periodicals/admin/manageReaders", UserRole.ADMIN));
         pathMatchers.add(new RequestMatcher("/periodicals/admin/getPeriodicalForEdit", UserRole.ADMIN));
-        pathMatchers.add(new RequestMatcher("/reader/readerHome.jsp",UserRole.READER));
-        pathMatchers.add(new RequestMatcher("/periodicals/periodical/readerSubscriptions",UserRole.READER));
-        pathMatchers.add(new RequestMatcher("/periodicals/periodical/periodicalsForSubscribing",UserRole.READER));
-        pathMatchers.add(new RequestMatcher("/periodicals/account/getAccountInfo",UserRole.READER));
-        pathMatchers.add(new RequestMatcher("/periodicals/periodical/getByTopicReaderSubscriptions",UserRole.READER));
-        pathMatchers.add(new RequestMatcher("/periodicals/periodical/findByNameReaderSubscriptions",UserRole.READER));
-        pathMatchers.add(new RequestMatcher("/periodicals/periodical/getByTopicPeriodicalsForSubscribing",UserRole.READER));
-        pathMatchers.add(new RequestMatcher("/periodicals/periodical/findByNamePeriodicalsForSubscribing",UserRole.READER));
+        pathMatchers.add(new RequestMatcher("/reader/readerHome.jsp", UserRole.READER));
+        pathMatchers.add(new RequestMatcher("/periodicals/periodical/readerSubscriptions", UserRole.READER));
+        pathMatchers.add(new RequestMatcher("/periodicals/periodical/periodicalsForSubscribing", UserRole.READER));
+        pathMatchers.add(new RequestMatcher("/periodicals/account/getAccountInfo", UserRole.READER));
+        pathMatchers.add(new RequestMatcher("/periodicals/periodical/getByTopicReaderSubscriptions", UserRole.READER));
+        pathMatchers.add(new RequestMatcher("/periodicals/periodical/findByNameReaderSubscriptions", UserRole.READER));
+        pathMatchers.add(new RequestMatcher("/periodicals/periodical/getByTopicPeriodicalsForSubscribing", UserRole.READER));
+        pathMatchers.add(new RequestMatcher("/periodicals/periodical/findByNamePeriodicalsForSubscribing", UserRole.READER));
 
         this.pathMatchers = pathMatchers;
     }

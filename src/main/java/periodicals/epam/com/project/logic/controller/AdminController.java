@@ -40,18 +40,18 @@ public class AdminController {
         return modelAndView;
     }
 
-    public ModelAndView deletePeriodicalForReaders(HttpServletRequest request){
+    public ModelAndView deletePeriodicalForReaders(HttpServletRequest request) {
         Long periodicalId = Long.parseLong(request.getParameter("periodicalId"));
         adminService.deletePeriodicalForReaders(periodicalId);
-        ModelAndView modelAndView =ModelAndView.withView("/periodicals/admin/managePeriodicals?periodicalId="+periodicalId);
+        ModelAndView modelAndView = ModelAndView.withView("/periodicals/admin/managePeriodicals?periodicalId=" + periodicalId);
         modelAndView.setRedirect(true);
         return modelAndView;
     }
 
-    public ModelAndView restorePeriodicalForReaders(HttpServletRequest request){
+    public ModelAndView restorePeriodicalForReaders(HttpServletRequest request) {
         Long periodicalId = Long.parseLong(request.getParameter("periodicalId"));
         adminService.restorePeriodicalForReaders(periodicalId);
-        ModelAndView modelAndView = ModelAndView.withView("/periodicals/admin/managePeriodicals?periodicalId="+periodicalId);
+        ModelAndView modelAndView = ModelAndView.withView("/periodicals/admin/managePeriodicals?periodicalId=" + periodicalId);
         modelAndView.setRedirect(true);
         return modelAndView;
     }
@@ -68,12 +68,12 @@ public class AdminController {
     public ModelAndView editPeriodicalById(HttpServletRequest request) {
         PeriodicalDTO dto = queryParameterHandler.handleRequest(request, PeriodicalDTO.class);
         adminService.editPeriodicalById(dto);
-        ModelAndView modelAndView = ModelAndView.withView("/periodicals/admin/getPeriodicalForEdit?periodicalId="+dto.getPeriodicalId());
+        ModelAndView modelAndView = ModelAndView.withView("/periodicals/admin/getPeriodicalForEdit?periodicalId=" + dto.getPeriodicalId());
         modelAndView.setRedirect(true);
         return modelAndView;
     }
 
-    public ModelAndView getAllReaders(HttpServletRequest request){
+    public ModelAndView getAllReaders(HttpServletRequest request) {
         List<Reader> listOfReaders = adminService.getAllReaders();
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addAttribute("readers", listOfReaders);
@@ -81,18 +81,18 @@ public class AdminController {
         return modelAndView;
     }
 
-    public ModelAndView lockReader(HttpServletRequest request){
+    public ModelAndView lockReader(HttpServletRequest request) {
         Long readerId = Long.parseLong(request.getParameter("readerId"));
         adminService.lockReader(readerId);
-        ModelAndView modelAndView = ModelAndView.withView("/periodicals/admin/manageReaders?readerId="+readerId);
+        ModelAndView modelAndView = ModelAndView.withView("/periodicals/admin/manageReaders?readerId=" + readerId);
         modelAndView.setRedirect(true);
         return modelAndView;
     }
 
-    public ModelAndView unlockReader(HttpServletRequest request){
+    public ModelAndView unlockReader(HttpServletRequest request) {
         Long readerId = Long.parseLong(request.getParameter("readerId"));
         adminService.unlockReader(readerId);
-        ModelAndView modelAndView = ModelAndView.withView("/periodicals/admin/manageReaders?readerId="+readerId);
+        ModelAndView modelAndView = ModelAndView.withView("/periodicals/admin/manageReaders?readerId=" + readerId);
         modelAndView.setRedirect(true);
         return modelAndView;
     }
