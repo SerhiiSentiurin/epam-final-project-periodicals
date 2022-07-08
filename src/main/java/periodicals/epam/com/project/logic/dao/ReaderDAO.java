@@ -20,9 +20,9 @@ public class ReaderDAO {
 
     @SneakyThrows
     public Optional<Reader> getReaderById(Long id) {
-        String sql = "SELECT user.login, reader.account_id, reader.lock, account.amount FROM user JOIN reader ON user.id = reader.id JOIN account ON reader.account_id = account.id WHERE user.id = ?;";
+        String getReaderById = "SELECT user.login, reader.account_id, reader.lock, account.amount FROM user JOIN reader ON user.id = reader.id JOIN account ON reader.account_id = account.id WHERE user.id = ?";
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(getReaderById)) {
             preparedStatement.setLong(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
@@ -44,7 +44,7 @@ public class ReaderDAO {
     }
 
     public ReaderCreateDTO insertReader(ReaderCreateDTO readerCreateDTO) {
-        String insertIntoUser = "INSERT INTO user (login, password, role) VALUES (?,?,?);";
+        String insertIntoUser = "INSERT INTO user (login, password, role) VALUES (?,?,?)";
         String insertIntoAccount = "INSERT INTO account (amount) VALUE (0)";
         String insertIntoReader = "INSERT INTO READER (id,account_id) values (?,?)";
         Connection connection = null;

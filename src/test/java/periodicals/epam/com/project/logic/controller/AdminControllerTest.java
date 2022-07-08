@@ -44,9 +44,6 @@ public class AdminControllerTest {
         expectedList.add(periodical2);
         when(adminService.getAllPeriodicals()).thenReturn(expectedList);
 
-        List<Periodical> resultList = adminService.getAllPeriodicals();
-        assertEquals(expectedList, resultList);
-
         ModelAndView modelAndView = adminController.getAllPeriodicals(request);
         assertNotNull(modelAndView);
         assertEquals("/admin/managePeriodicals.jsp", modelAndView.getView());
@@ -60,9 +57,6 @@ public class AdminControllerTest {
         when(queryParameterHandler.handleRequest(request, PeriodicalDTO.class)).thenReturn(expectedDto);
         when(adminService.createNewPeriodical(expectedDto)).thenReturn(true);
 
-        PeriodicalDTO resultDto = queryParameterHandler.handleRequest(request, PeriodicalDTO.class);
-        assertEquals(expectedDto, resultDto);
-
         ModelAndView modelAndView = adminController.createNewPeriodical(request);
         assertNotNull(modelAndView);
         assertEquals("/periodicals/admin/managePeriodicals?name=" + expectedDto.getName() + "&topic=" + expectedDto.getTopic() + "&cost=" + expectedDto.getCost() + "&description=" + expectedDto.getDescription(), modelAndView.getView());
@@ -74,14 +68,9 @@ public class AdminControllerTest {
         when(request.getParameter("periodicalId")).thenReturn(String.valueOf(PERIODICAL_ID));
         when(adminService.deletePeriodicalByPeriodicalId(PERIODICAL_ID)).thenReturn(true);
 
-        Long periodicalId = Long.parseLong(request.getParameter("periodicalId"));
-        assertEquals(PERIODICAL_ID, periodicalId);
-        boolean result = adminService.deletePeriodicalByPeriodicalId(periodicalId);
-        assertTrue(result);
-
         ModelAndView modelAndView = adminController.deletePeriodicalByPeriodicalId(request);
         assertNotNull(modelAndView);
-        assertEquals("/periodicals/admin/managePeriodicals?periodicalId=" + periodicalId, modelAndView.getView());
+        assertEquals("/periodicals/admin/managePeriodicals?periodicalId=" + PERIODICAL_ID, modelAndView.getView());
         assertTrue(modelAndView.isRedirect());
     }
 
@@ -90,14 +79,9 @@ public class AdminControllerTest {
         when(request.getParameter("periodicalId")).thenReturn(String.valueOf(PERIODICAL_ID));
         when(adminService.deletePeriodicalForReaders(PERIODICAL_ID)).thenReturn(true);
 
-        Long periodicalId = Long.parseLong(request.getParameter("periodicalId"));
-        assertEquals(PERIODICAL_ID, periodicalId);
-        boolean result = adminService.deletePeriodicalForReaders(periodicalId);
-        assertTrue(result);
-
         ModelAndView modelAndView = adminController.deletePeriodicalForReaders(request);
         assertNotNull(modelAndView);
-        assertEquals("/periodicals/admin/managePeriodicals?periodicalId=" + periodicalId, modelAndView.getView());
+        assertEquals("/periodicals/admin/managePeriodicals?periodicalId=" + PERIODICAL_ID, modelAndView.getView());
         assertTrue(modelAndView.isRedirect());
     }
 
@@ -106,14 +90,9 @@ public class AdminControllerTest {
         when(request.getParameter("periodicalId")).thenReturn(String.valueOf(PERIODICAL_ID));
         when(adminService.restorePeriodicalForReaders(PERIODICAL_ID)).thenReturn(true);
 
-        Long periodicalId = Long.parseLong(request.getParameter("periodicalId"));
-        assertEquals(PERIODICAL_ID, periodicalId);
-        boolean result = adminService.restorePeriodicalForReaders(periodicalId);
-        assertTrue(result);
-
         ModelAndView modelAndView = adminController.restorePeriodicalForReaders(request);
         assertNotNull(modelAndView);
-        assertEquals("/periodicals/admin/managePeriodicals?periodicalId=" + periodicalId, modelAndView.getView());
+        assertEquals("/periodicals/admin/managePeriodicals?periodicalId=" + PERIODICAL_ID, modelAndView.getView());
         assertTrue(modelAndView.isRedirect());
     }
 
@@ -122,11 +101,6 @@ public class AdminControllerTest {
         Periodical expectedPeriodical = Mockito.mock(Periodical.class);
         when(request.getParameter("periodicalId")).thenReturn(String.valueOf(PERIODICAL_ID));
         when(adminService.getPeriodicalById(PERIODICAL_ID)).thenReturn(expectedPeriodical);
-
-        Long periodicalId = Long.parseLong(request.getParameter("periodicalId"));
-        assertEquals(PERIODICAL_ID, periodicalId);
-        Periodical resultPeriodical = adminService.getPeriodicalById(periodicalId);
-        assertEquals(expectedPeriodical,resultPeriodical);
 
         ModelAndView modelAndView = adminController.getPeriodicalById(request);
         assertNotNull(modelAndView);
@@ -140,9 +114,6 @@ public class AdminControllerTest {
         PeriodicalDTO expectedDto = Mockito.mock(PeriodicalDTO.class);
         when(queryParameterHandler.handleRequest(request, PeriodicalDTO.class)).thenReturn(expectedDto);
         when(adminService.editPeriodicalById(expectedDto)).thenReturn(true);
-
-        PeriodicalDTO resultDto = queryParameterHandler.handleRequest(request, PeriodicalDTO.class);
-        assertEquals(expectedDto, resultDto);
 
         ModelAndView modelAndView = adminController.editPeriodicalById(request);
         assertNotNull(modelAndView);
@@ -159,13 +130,10 @@ public class AdminControllerTest {
         expectedList.add(reader2);
         when(adminService.getAllReaders()).thenReturn(expectedList);
 
-        List<Reader> resultList = adminService.getAllReaders();
-        assertEquals(expectedList,resultList);
-
         ModelAndView modelAndView = adminController.getAllReaders(request);
         assertNotNull(modelAndView);
         assertEquals("/admin/manageReaders.jsp",modelAndView.getView());
-        assertEquals(resultList,modelAndView.getAttributes().get("readers"));
+        assertEquals(expectedList,modelAndView.getAttributes().get("readers"));
         assertFalse(modelAndView.isRedirect());
     }
 
@@ -174,14 +142,9 @@ public class AdminControllerTest {
         when(request.getParameter("readerId")).thenReturn(String.valueOf(READER_ID));
         when(adminService.lockReader(READER_ID)).thenReturn(true);
 
-        Long readerId = Long.parseLong(request.getParameter("readerId"));
-        assertEquals(READER_ID, readerId);
-        boolean result = adminService.lockReader(readerId);
-        assertTrue(result);
-
         ModelAndView modelAndView = adminController.lockReader(request);
         assertNotNull(modelAndView);
-        assertEquals("/periodicals/admin/manageReaders?readerId=" + readerId, modelAndView.getView());
+        assertEquals("/periodicals/admin/manageReaders?readerId=" + READER_ID, modelAndView.getView());
         assertTrue(modelAndView.isRedirect());
     }
 
@@ -190,14 +153,9 @@ public class AdminControllerTest {
         when(request.getParameter("readerId")).thenReturn(String.valueOf(READER_ID));
         when(adminService.unlockReader(READER_ID)).thenReturn(true);
 
-        Long readerId = Long.parseLong(request.getParameter("readerId"));
-        assertEquals(READER_ID, readerId);
-        boolean result = adminService.unlockReader(readerId);
-        assertTrue(result);
-
         ModelAndView modelAndView = adminController.unlockReader(request);
         assertNotNull(modelAndView);
-        assertEquals("/periodicals/admin/manageReaders?readerId=" + readerId, modelAndView.getView());
+        assertEquals("/periodicals/admin/manageReaders?readerId=" + READER_ID, modelAndView.getView());
         assertTrue(modelAndView.isRedirect());
     }
 }

@@ -11,6 +11,9 @@ public class PrepaymentService {
     public PrepaymentDTO addSubscription(PrepaymentDTO dto) {
         return prepaymentDAO.addSubscription(dto);
     }
+    public boolean deleteSubscription(Long readerId, Long periodicalId){
+        return prepaymentDAO.deleteSubscription(readerId,periodicalId);
+    }
 
 
 }

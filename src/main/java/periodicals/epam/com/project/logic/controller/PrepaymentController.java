@@ -13,10 +13,19 @@ public class PrepaymentController {
     private final PrepaymentService prepaymentService;
     private final QueryParameterHandler queryParameterHandler;
 
-    public ModelAndView addSubscription (HttpServletRequest request) {
+    public ModelAndView addSubscription(HttpServletRequest request) {
         PrepaymentDTO dto = queryParameterHandler.handleRequest(request, PrepaymentDTO.class);
         prepaymentService.addSubscription(dto);
         ModelAndView modelAndView = ModelAndView.withView("/periodicals/periodical/periodicalsForSubscribing?readerId=" + dto.getReaderId());
+        modelAndView.setRedirect(true);
+        return modelAndView;
+    }
+
+    public ModelAndView deleteSubscription(HttpServletRequest request) {
+        long readerId = Long.parseLong(request.getParameter("readerId"));
+        long periodicalId = Long.parseLong(request.getParameter("periodicalId"));
+        prepaymentService.deleteSubscription(readerId, periodicalId);
+        ModelAndView modelAndView = ModelAndView.withView("/periodicals/periodical/readerSubscriptions?readerId="+readerId);
         modelAndView.setRedirect(true);
         return modelAndView;
     }

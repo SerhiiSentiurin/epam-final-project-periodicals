@@ -55,6 +55,7 @@
                         <th><lang:print message = "periodical.periodicalForSubscribing.jsp.table.description"/></th>
                         <th><lang:print message = "periodical.watchSubscriptions.jsp.table.start"/></th>
                         <th><lang:print message = "periodical.watchSubscriptions.jsp.table.end"/></th>
+                        <th><lang:print message = "periodical.watchSubscriptions.jsp.table.delete_subscription"/></th>
                     </tr>
                 <c:forEach var="i" begin="0" end="${periodicals.size()-1}">
                     <tr>
@@ -64,6 +65,13 @@
                         <td>${periodicals.get(i).description}</td>
                         <td>${prepayments.get(i).startDate}</td>
                         <td>${prepayments.get(i).dueDate}</td>
+                        <td>
+                            <form action = "/app/periodicals/prepayment/deleteSubscription" method = "POST" onsubmit = "return confirm('You are deleting subscription for ${periodicals.get(i).name}, money will not return! Are you sure you want to unsubscribe?');">
+                                <input type = "hidden" name="readerId" value = "${sessionScope.user.id}"/>
+                                <input type = "hidden" name="periodicalId" value = "${periodicals.get(i).id}"/>
+                                <input type = "submit" value = '<lang:print message = "periodical.watchSubscriptions.jsp.table.button.unsubscribe"/>'>
+                            </form>
+                        </td>
                     </tr>
                 </c:forEach>
             </table>

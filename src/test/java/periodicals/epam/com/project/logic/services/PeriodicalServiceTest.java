@@ -56,7 +56,7 @@ public class PeriodicalServiceTest {
 
         when(dao.getPeriodicalsByTopic(TOPIC)).thenReturn(expectedList);
 
-        List<Periodical> resultList = dao.getPeriodicalsByTopic(TOPIC);
+        List<Periodical> resultList = periodicalService.getPeriodicalsByTopic(TOPIC);
         assertEquals(expectedList, resultList);
     }
 

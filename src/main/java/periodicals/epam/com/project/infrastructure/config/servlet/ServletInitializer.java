@@ -84,6 +84,7 @@ public class ServletInitializer implements ServletContainerInitializer {
         AdminController adminController = createAdminController(queryParameterHandler, adminService);
 
         placeholders.add(new Placeholder("POST", "prepayment/addSubscription", prepaymentController::addSubscription));
+        placeholders.add(new Placeholder("POST", "prepayment/deleteSubscription", prepaymentController::deleteSubscription));
         placeholders.add(new Placeholder("POST", "reader/create", readerController::createReader));
         placeholders.add(new Placeholder("GET", "reader", readerController::getReaderById));
         placeholders.add(new Placeholder("GET", "periodical/watch", periodicalController::getAllPeriodicals));

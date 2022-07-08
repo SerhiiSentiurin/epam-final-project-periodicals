@@ -21,25 +21,12 @@ public class PrepaymentDAO {
 
     public PrepaymentDTO addSubscription(PrepaymentDTO dto) {
         String addSubscription = "INSERT INTO periodicals (reader_id, periodical_id) VALUES (?,?)";
-        String updateAccount = "UPDATE account INNER JOIN reader ON account.id = reader.account_id SET account.amount = ? WHERE reader.id = " + dto.getReaderId() + ";";
+        String updateAccount = "UPDATE account INNER JOIN reader ON account.id = reader.account_id SET account.amount = ? WHERE reader.id = " + dto.getReaderId();
         String updatePrepayment = "INSERT INTO prepayment (start_date, due_date, periodical_id, reader_id) VALUES (curdate(), adddate(start_date, INTERVAL " + dto.getDurationOfSubscription() +" DAY), " + dto.getPeriodicalId() + ", " + dto.getReaderId() + ");";
-        Double costPeerMonth = getPeriodicalCost(dto.getPeriodicalId());
-        Double costPeerYear = (getPeriodicalCost(dto.getPeriodicalId()) * 12) - (getPeriodicalCost(dto.getPeriodicalId()) * 12) * 0.1; // with 10% discount
-        Double accountBalance = getAmountFromAccount(dto.getReaderId());
+        checkAccountAmount(dto);
         Connection connection = null;
         PreparedStatement preparedStatement = null;
 
-        if ((costPeerMonth > accountBalance) && (dto.getDurationOfSubscription() <= 30)) {
-            log.error("reader have not enough money on the account");
-            throw new ReaderException("Not enough money on the account");
-        } else if ((costPeerYear > accountBalance) && (dto.getDurationOfSubscription() > 30)) {
-            log.error("reader have not enough money on the account");
-            throw new ReaderException("Not enough money on the account, try to get month subscription or top up your account!");
-        } else if (dto.getDurationOfSubscription() > 30) {
-            dto.setAmountOfMoney(accountBalance - costPeerYear);
-        } else {
-            dto.setAmountOfMoney(accountBalance - costPeerMonth);
-        }
         try {
             connection = dataSource.getConnection();
             connection.setAutoCommit(false);
@@ -66,8 +53,57 @@ public class PrepaymentDAO {
         }
     }
 
+    protected void checkAccountAmount(PrepaymentDTO dto){
+        Double costPeerMonth = getPeriodicalCost(dto.getPeriodicalId());
+        Double costPeerYear = (getPeriodicalCost(dto.getPeriodicalId()) * 12) * 0.9; // with 10% discount
+        Double accountBalance = getAmountFromAccount(dto.getReaderId());
+
+        if ((costPeerMonth > accountBalance) && (dto.getDurationOfSubscription() <= 30)) {
+            log.error("reader have not enough money on the account");
+            throw new ReaderException("Not enough money on the account");
+        } else if ((costPeerYear > accountBalance) && (dto.getDurationOfSubscription() > 30)) {
+            log.error("reader have not enough money on the account");
+            throw new ReaderException("Not enough money on the account, try to get month subscription or top up your account!");
+        } else if (dto.getDurationOfSubscription() > 30) {
+            dto.setAmountOfMoney(accountBalance - costPeerYear);
+        } else {
+            dto.setAmountOfMoney(accountBalance - costPeerMonth);
+        }
+    }
+
     @SneakyThrows
-    private Double getPeriodicalCost(Long periodicalId) {
+    public boolean deleteSubscription(Long readerId,Long periodicalId){
+        String deleteFromPeriodicals = "DELETE FROM periodicals WHERE reader_id = ? AND periodical_id = ?";
+        String deleteFromPrepayments = "DELETE FROM prepayment WHERE reader_id = ? AND periodical_id = ?";
+
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+            preparedStatement = connection.prepareStatement(deleteFromPeriodicals);
+            preparedStatement.setLong(1, readerId);
+            preparedStatement.setLong(2, periodicalId);
+            preparedStatement.execute();
+            try (PreparedStatement preparedStatement1 = connection.prepareStatement(deleteFromPrepayments)) {
+                preparedStatement1.setLong(1, readerId);
+                preparedStatement1.setLong(2, periodicalId);
+                preparedStatement1.execute();
+            }
+            connection.commit();
+            return true;
+        }catch (Exception e){
+            rollback(connection);
+            log.error(e.getMessage());
+            throw new ReaderException("Transaction failed with delete subscription");
+        }finally {
+            close(preparedStatement);
+            close(connection);
+        }
+    }
+
+    @SneakyThrows
+    protected Double getPeriodicalCost(Long periodicalId) {
         String selectCost = "SELECT cost FROM periodical WHERE id = ?";
         Periodical periodical = new Periodical();
         try (Connection connection = dataSource.getConnection();
@@ -83,7 +119,7 @@ public class PrepaymentDAO {
     }
 
     @SneakyThrows
-    private Double getAmountFromAccount(Long readerId) {
+    protected Double getAmountFromAccount(Long readerId) {
         String selectAccountAmount = "SELECT account.id, amount FROM account JOIN reader ON reader.account_id = account.id WHERE reader.id = ?";
         Account readerAccount = new Account();
         try (Connection connection = dataSource.getConnection();

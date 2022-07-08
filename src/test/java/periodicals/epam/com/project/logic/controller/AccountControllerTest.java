@@ -48,9 +48,6 @@ public class AccountControllerTest {
         when(queryParameterHandler.handleRequest(request, AccountDTO.class)).thenReturn(dto);
         when(accountService.getAmountOfMoneyByReaderId(dto)).thenReturn(AMOUNT_OF_MONEY);
 
-        Double amount = accountService.getAmountOfMoneyByReaderId(dto);
-        assertEquals(AMOUNT_OF_MONEY, amount);
-
         ModelAndView modelAndView = accountController.getAmountOfMoneyByReaderId(request);
         assertNotNull(modelAndView);
         assertEquals("/account/manageAccount.jsp", modelAndView.getView());

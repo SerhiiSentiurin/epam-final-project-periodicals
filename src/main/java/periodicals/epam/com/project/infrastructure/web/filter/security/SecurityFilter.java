@@ -23,6 +23,9 @@ public class SecurityFilter implements Filter {
         List<RequestMatcher> pathMatchers = new ArrayList<>();
 
         pathMatchers.add(new RequestMatcher("/admin/adminHome.jsp", UserRole.ADMIN));
+        pathMatchers.add(new RequestMatcher("/admin/editPeriodical.jsp", UserRole.ADMIN));
+        pathMatchers.add(new RequestMatcher("/admin/managePeriodical.jsp", UserRole.ADMIN));
+        pathMatchers.add(new RequestMatcher("/admin/manageReaders.jsp", UserRole.ADMIN));
         pathMatchers.add(new RequestMatcher("/periodicals/admin/managePeriodicals", UserRole.ADMIN));
         pathMatchers.add(new RequestMatcher("/periodicals/admin/manageReaders", UserRole.ADMIN));
         pathMatchers.add(new RequestMatcher("/periodicals/admin/getPeriodicalForEdit", UserRole.ADMIN));
@@ -34,6 +37,8 @@ public class SecurityFilter implements Filter {
         pathMatchers.add(new RequestMatcher("/periodicals/periodical/findByNameReaderSubscriptions", UserRole.READER));
         pathMatchers.add(new RequestMatcher("/periodicals/periodical/getByTopicPeriodicalsForSubscribing", UserRole.READER));
         pathMatchers.add(new RequestMatcher("/periodicals/periodical/findByNamePeriodicalsForSubscribing", UserRole.READER));
+        pathMatchers.add(new RequestMatcher("/periodical/periodicalsForSubscribing.jsp", UserRole.READER));
+        pathMatchers.add(new RequestMatcher("/periodical/watchSubscriptions.jsp", UserRole.READER));
 
         this.pathMatchers = pathMatchers;
     }
