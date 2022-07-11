@@ -21,10 +21,10 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class AdminServiceTest {
     @Mock
-    AdminDAO dao;
+    private AdminDAO dao;
 
     @InjectMocks
-    AdminService adminService;
+    private AdminService adminService;
 
     private static final Long PERIODICAL_ID = 5L;
     private static final Long READER_ID = 1L;
@@ -118,9 +118,7 @@ public class AdminServiceTest {
     @Test
     public void getAllReadersEmptyTest() {
         List<Reader> expectedList = Collections.emptyList();
-
         when(dao.getAllReaders()).thenReturn(expectedList);
-
         List<Reader> resultList = adminService.getAllReaders();
         assertEquals(expectedList, resultList);
     }

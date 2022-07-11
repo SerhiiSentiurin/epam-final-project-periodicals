@@ -32,8 +32,10 @@ public class AccountDAOTest {
     @InjectMocks
     private AccountDAO dao;
 
-    private static final String TOP_UP_ACCOUNT_AMOUNT = "UPDATE account INNER JOIN reader ON account.id = reader.account_id SET account.amount = ? WHERE reader.id = ?";
-    private static final String GET_AMOUNT_OF_MONEY_BY_READER_ID = "SELECT account.id, amount FROM account JOIN reader ON reader.account_id = account.id WHERE reader.id = ?";
+    private static final String TOP_UP_ACCOUNT_AMOUNT = "UPDATE account INNER JOIN reader ON account.id = reader.account_id "+
+            "SET account.amount = ? WHERE reader.id = ?";
+    private static final String GET_AMOUNT_OF_MONEY_BY_READER_ID = "SELECT account.id, amount FROM account JOIN reader ON "+
+            "reader.account_id = account.id WHERE reader.id = ?";
     private static final Double AMOUNT_OF_MONEY = 50d;
     private static final Double ZERO_AMOUNT_OF_MONEY = 0d;
     private static final Long READER_ID = 2L;

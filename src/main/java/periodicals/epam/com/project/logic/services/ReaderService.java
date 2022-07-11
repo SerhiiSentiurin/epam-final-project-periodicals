@@ -19,7 +19,8 @@ public class ReaderService {
     }
 
     public Reader getReaderById(Long id) {
-        return readerDAO.getReaderById(id).orElseThrow(() -> new ReaderException("can't find reader"));
+        return readerDAO.getReaderById(id)
+                .orElseThrow(() -> new ReaderException("can't find reader"));
     }
 
 }

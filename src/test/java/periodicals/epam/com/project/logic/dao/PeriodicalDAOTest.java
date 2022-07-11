@@ -36,14 +36,23 @@ public class PeriodicalDAOTest {
     private static final String GET_ALL_PERIODICALS = "SELECT * FROM periodical";
     private static final String GET_PERIODICAL_BY_TOPIC = "SELECT * FROM periodical WHERE topic = ?";
     private static final String GET_PERIODICAL_BY_NAME = "SELECT * FROM periodical WHERE name LIKE ?";
-    private static final String GET_PERIODICALS_BY_READER_ID = "SELECT * FROM periodical JOIN periodicals ON periodical.id = periodicals.periodical_id WHERE reader_id =? ORDER BY periodical.id";
-    private static final String GET_PERIODICAL_BY_TOPIC_BY_READER_ID = "SELECT * FROM periodical JOIN prepayment ON periodical.id = prepayment.periodical_id WHERE reader_id =? AND topic =? ORDER BY periodical.id";
-    private static final String GET_PREPAYMENTS_BY_READER_ID = "SELECT prepayment.id, start_date, due_date, periodical_id FROM periodical JOIN prepayment ON periodical.id = prepayment.periodical_id WHERE reader_id =? ORDER BY periodical_id";
-    private static final String FIND_PERIODICALS_BY_NAME_BY_READER_ID = "SELECT * FROM periodical JOIN prepayment ON periodical.id = prepayment.periodical_id WHERE reader_id =? AND name LIKE ? ORDER BY periodical.id";
-    private static final String GET_PERIODICALS_FOR_SUBSCRIBING = "SELECT distinct id, name, topic, cost, description, isDeleted FROM periodical left join periodicals ON periodicals.periodical_id = periodical.id WHERE (reader_id IS NULL OR NOT periodical_id = 1) and isDeleted = false";
-    private static final String GET_PERIODICALS_FOR_SUBSCRIBING_FOR_NEW_READER = "SELECT distinct id, name, topic, cost, description, isDeleted FROM periodical left join periodicals ON periodicals.periodical_id = periodical.id WHERE isDeleted = false";
-    private static final String FIND_PERIODICALS_FOR_SUBSCRIBING_BY_NAME = "SELECT distinct id, name, topic, cost, description, isDeleted FROM periodical left join periodicals ON periodicals.periodical_id = periodical.id WHERE (reader_id IS NULL OR NOT periodical_id = 1) AND isDeleted = false AND name LIKE ?";
-    private static final String FIND_PERIODICALS_FOR_SUBSCRIBING_BY_NAME_FOR_NEW_READER ="SELECT distinct id, name, topic, cost, description, isDeleted FROM periodical LEFT JOIN periodicals ON periodicals.periodical_id = periodical.id WHERE name LIKE ? AND isDeleted = false";
+    private static final String GET_PERIODICALS_BY_READER_ID = "SELECT * FROM periodical JOIN periodicals ON "+
+            "periodical.id = periodicals.periodical_id WHERE reader_id =? ORDER BY periodical.id";
+    private static final String GET_PERIODICAL_BY_TOPIC_BY_READER_ID = "SELECT * FROM periodical JOIN prepayment ON "+
+            "periodical.id = prepayment.periodical_id WHERE reader_id =? AND topic =? ORDER BY periodical.id";
+    private static final String GET_PREPAYMENTS_BY_READER_ID = "SELECT prepayment.id, start_date, due_date, periodical_id FROM "+
+            "periodical JOIN prepayment ON periodical.id = prepayment.periodical_id WHERE reader_id =? ORDER BY periodical_id";
+    private static final String FIND_PERIODICALS_BY_NAME_BY_READER_ID = "SELECT * FROM periodical JOIN prepayment ON "+
+            "periodical.id = prepayment.periodical_id WHERE reader_id =? AND name LIKE ? ORDER BY periodical.id";
+    private static final String GET_PERIODICALS_FOR_SUBSCRIBING = "SELECT distinct id, name, topic, cost, description, isDeleted FROM "+
+            "periodical left join periodicals ON periodicals.periodical_id = periodical.id WHERE (reader_id IS NULL OR NOT periodical_id = 1) and isDeleted = false";
+    private static final String GET_PERIODICALS_FOR_SUBSCRIBING_FOR_NEW_READER = "SELECT distinct id, name, topic, cost, description, "+
+            "isDeleted FROM periodical left join periodicals ON periodicals.periodical_id = periodical.id WHERE isDeleted = false";
+    private static final String FIND_PERIODICALS_FOR_SUBSCRIBING_BY_NAME = "SELECT distinct id, name, topic, cost, description, "+
+            "isDeleted FROM periodical left join periodicals ON periodicals.periodical_id = periodical.id WHERE "+
+            "(reader_id IS NULL OR NOT periodical_id = 1) AND isDeleted = false AND name LIKE ?";
+    private static final String FIND_PERIODICALS_FOR_SUBSCRIBING_BY_NAME_FOR_NEW_READER ="SELECT distinct id, name, topic, "+
+            "cost, description, isDeleted FROM periodical LEFT JOIN periodicals ON periodicals.periodical_id = periodical.id WHERE name LIKE ? AND isDeleted = false";
     private static final String GET_PERIODICAL_ID_BY_READER_ID = "SELECT periodical_id FROM periodicals WHERE reader_id = ? order by periodical_id";
     private static final Long PERIODICAL_ID = 1L;
     private static final Long READER_ID = 1L;

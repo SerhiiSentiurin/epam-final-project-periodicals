@@ -12,7 +12,7 @@ public class UserService {
 
     public User getUserByLogin(UserDTO userDto) {
         User user = userDao.getUserByLogin(userDto.getLogin())
-                .orElseThrow(() -> new ApplicationException("user by login didn't find"));
+                .orElseThrow(() -> new ApplicationException("cannot find user with this login"));
 
         if (!user.getPassword().equals(userDto.getPassword())) {
             throw new ApplicationException("password is incorrect");

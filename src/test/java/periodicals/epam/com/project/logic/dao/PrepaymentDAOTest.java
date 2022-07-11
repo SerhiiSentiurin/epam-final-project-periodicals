@@ -31,14 +31,16 @@ public class PrepaymentDAOTest {
     private Statement statement;
 
     @InjectMocks
-    PrepaymentDAO dao;
+    private PrepaymentDAO dao;
 
     private static final Long READER_ID = 1L;
     private static final Long PERIODICAL_ID = 1L;
     private static final PrepaymentDTO dto = new PrepaymentDTO(30, READER_ID,PERIODICAL_ID,50d);
     private static final String ADD_SUBSCRIPTION = "INSERT INTO periodicals (reader_id, periodical_id) VALUES (?,?)";
-    private static final String UPDATE_ACCOUNT = "UPDATE account INNER JOIN reader ON account.id = reader.account_id SET account.amount = ? WHERE reader.id = " + dto.getReaderId();
-    private static final String UPDATE_PREPAYMENT = "INSERT INTO prepayment (start_date, due_date, periodical_id, reader_id) VALUES (curdate(), adddate(start_date, INTERVAL " + dto.getDurationOfSubscription() +" DAY), " + dto.getPeriodicalId() + ", " + dto.getReaderId() + ");";
+    private static final String UPDATE_ACCOUNT = "UPDATE account INNER JOIN reader ON account.id = reader.account_id SET "+
+            "account.amount = ? WHERE reader.id = " + dto.getReaderId();
+    private static final String UPDATE_PREPAYMENT = "INSERT INTO prepayment (start_date, due_date, periodical_id, reader_id) VALUES "+
+            "(curdate(), adddate(start_date, INTERVAL " + dto.getDurationOfSubscription() +" DAY), " + dto.getPeriodicalId() + ", " + dto.getReaderId() + ");";
     private static final String DELETE_FROM_PERIODICALS = "DELETE FROM periodicals WHERE reader_id = ? AND periodical_id = ?";
     private static final String DELETE_FROM_PREPAYMENTS = "DELETE FROM prepayment WHERE reader_id = ? AND periodical_id = ?";
 

@@ -28,8 +28,8 @@ public class ReaderController {
 
     public ModelAndView createReader(HttpServletRequest request) {
         ReaderCreateDTO dto = queryParameterHandler.handleRequest(request, ReaderCreateDTO.class);
-        Reader createdReader = readerService.createReader(dto);
         ModelAndView modelAndView = ModelAndView.withView("/reader/successRegister.jsp");
+        modelAndView.addAttribute("reader",readerService.createReader(dto));
         modelAndView.setRedirect(true);
         return modelAndView;
     }

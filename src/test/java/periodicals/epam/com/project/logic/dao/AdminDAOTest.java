@@ -43,7 +43,8 @@ public class AdminDAOTest {
     private static final String RESTORE_PERIODICAL_FOR_READERS = "UPDATE periodical SET isDeleted = false WHERE id = ?";
     private static final String GET_PERIODICAL_BY_ID = "SELECT * FROM periodical WHERE id =?";
     private static final String EDIT_PERIODICAL_BY_ID = "UPDATE periodical SET name =?, topic =?, cost =?, description =? WHERE id =?";
-    private static final String GET_ALL_READERS = "SELECT user.login, account.amount, reader.lock, reader.account_id, reader.id FROM user JOIN reader ON user.id = reader.id JOIN account ON reader.account_id = account.id";
+    private static final String GET_ALL_READERS = "SELECT user.login, account.amount, reader.lock, reader.account_id, reader.id FROM "+
+            "user JOIN reader ON user.id = reader.id JOIN account ON reader.account_id = account.id";
     private static final String LOCK_READER = "UPDATE reader SET reader.lock = true WHERE id = ?";
     private static final String UNLOCK_READER = "UPDATE reader SET reader.lock = false WHERE id = ?";
     private static final Long PERIODICAL_ID = 5L;

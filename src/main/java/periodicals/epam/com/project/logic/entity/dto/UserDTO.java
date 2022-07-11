@@ -1,10 +1,13 @@
 package periodicals.epam.com.project.logic.entity.dto;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserDTO {
-    @Getter
     private String login;
-    @Getter
     private String password;
 }

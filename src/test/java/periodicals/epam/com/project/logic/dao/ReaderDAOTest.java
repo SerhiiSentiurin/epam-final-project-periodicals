@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import periodicals.epam.com.project.logic.entity.Account;
 import periodicals.epam.com.project.logic.entity.Reader;
@@ -42,7 +41,8 @@ public class ReaderDAOTest {
 
     private static final Long READER_ID = 1L;
     private static final Long ACCOUNT_ID = 1L;
-    private static final String GET_READER_BY_ID = "SELECT user.login, reader.account_id, reader.lock, account.amount FROM user JOIN reader ON user.id = reader.id JOIN account ON reader.account_id = account.id WHERE user.id = ?";
+    private static final String GET_READER_BY_ID = "SELECT user.login, reader.account_id, reader.lock, account.amount FROM "+
+            "user JOIN reader ON user.id = reader.id JOIN account ON reader.account_id = account.id WHERE user.id = ?";
     private static final String INSERT_INTO_USER = "INSERT INTO user (login, password, role) VALUES (?,?,?)";
     private static final String INSERT_INTO_ACCOUNT = "INSERT INTO account (amount) VALUE (0)";
     private static final String INSERT_INTO_READER = "INSERT INTO READER (id,account_id) values (?,?)";

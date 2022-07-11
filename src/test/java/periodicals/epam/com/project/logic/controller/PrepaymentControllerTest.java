@@ -18,14 +18,14 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class PrepaymentControllerTest {
     @Mock
-    PrepaymentService prepaymentService;
+    private PrepaymentService prepaymentService;
     @Mock
-    QueryParameterHandler queryParameterHandler;
+    private QueryParameterHandler queryParameterHandler;
     @Mock
-    HttpServletRequest request;
+    private HttpServletRequest request;
 
     @InjectMocks
-    PrepaymentController prepaymentController;
+    private PrepaymentController prepaymentController;
 
     private static final Long READER_ID= 1L;
     private static final Long PERIODICAL_ID = 1L;

@@ -23,14 +23,14 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class AdminControllerTest {
     @Mock
-    AdminService adminService;
+    private AdminService adminService;
     @Mock
-    QueryParameterHandler queryParameterHandler;
+    private QueryParameterHandler queryParameterHandler;
     @Mock
-    HttpServletRequest request;
+    private HttpServletRequest request;
 
     @InjectMocks
-    AdminController adminController;
+    private AdminController adminController;
 
     private static final Long PERIODICAL_ID = 5L;
     private static final Long READER_ID = 1L;

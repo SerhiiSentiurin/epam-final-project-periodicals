@@ -17,14 +17,14 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class AccountControllerTest {
     @Mock
-    AccountService accountService;
+    private AccountService accountService;
     @Mock
-    QueryParameterHandler queryParameterHandler;
+    private QueryParameterHandler queryParameterHandler;
     @Mock
-    HttpServletRequest request;
+    private HttpServletRequest request;
 
     @InjectMocks
-    AccountController accountController;
+    private AccountController accountController;
 
     private static final Long READER_ID = 2L;
     private static final Double AMOUNT_OF_MONEY = 50d;

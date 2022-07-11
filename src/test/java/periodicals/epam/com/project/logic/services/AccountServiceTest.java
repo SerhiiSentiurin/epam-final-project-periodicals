@@ -1,6 +1,5 @@
 package periodicals.epam.com.project.logic.services;
 
-import liquibase.pro.packaged.A;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,10 +15,10 @@ import static org.mockito.Mockito.when;
 public class AccountServiceTest {
 
     @Mock
-    AccountDAO dao;
+    private AccountDAO dao;
 
     @InjectMocks
-    AccountService accountService;
+    private AccountService accountService;
 
     private static final Long READER_ID = 2L;
     private static final Double AMOUNT_OF_MONEY = 50d;
@@ -28,7 +27,6 @@ public class AccountServiceTest {
     @Test
     public void topUpAccountTest(){
         AccountDTO dto = new AccountDTO(AMOUNT_OF_MONEY,READER_ID,PERIODICAL_ID);
-
         when(dao.topUpAccountAmount(dto)).thenReturn(dto);
         AccountDTO resDto = accountService.topUpAccountAmount(dto);
         Assert.assertEquals(resDto,dto);
@@ -37,7 +35,6 @@ public class AccountServiceTest {
     @Test
     public void getAmountOfMoneyByReaderIdTest(){
         AccountDTO dto = new AccountDTO(AMOUNT_OF_MONEY,READER_ID,PERIODICAL_ID);
-
         when(dao.getAmountOfMoneyByReaderId(dto)).thenReturn(AMOUNT_OF_MONEY);
         Double amount = accountService.getAmountOfMoneyByReaderId(dto);
         Assert.assertEquals(AMOUNT_OF_MONEY,amount);

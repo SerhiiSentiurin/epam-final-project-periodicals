@@ -23,14 +23,14 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class PeriodicalControllerTest {
     @Mock
-    PeriodicalService periodicalService;
+    private PeriodicalService periodicalService;
     @Mock
-    ReaderService readerService;
+    private ReaderService readerService;
     @Mock
-    HttpServletRequest request;
+    private HttpServletRequest request;
 
     @InjectMocks
-    PeriodicalController periodicalController;
+    private PeriodicalController periodicalController;
 
     private static final Long READER_ID = 1L;
     private static final Long PERIODICAL_ID = 1L;

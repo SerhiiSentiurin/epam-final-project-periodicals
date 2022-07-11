@@ -1,11 +1,9 @@
 package periodicals.epam.com.project.logic.services;
 
-import liquibase.pro.packaged.M;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import periodicals.epam.com.project.logic.dao.PeriodicalDAO;
 import periodicals.epam.com.project.logic.entity.Periodical;
@@ -20,10 +18,10 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class PeriodicalServiceTest {
     @Mock
-    PeriodicalDAO dao;
+    private PeriodicalDAO dao;
 
     @InjectMocks
-    PeriodicalService periodicalService;
+    private PeriodicalService periodicalService;
 
     private static final Long PERIODICAL_ID = 1L;
     private static final Long READER_ID = 1L;

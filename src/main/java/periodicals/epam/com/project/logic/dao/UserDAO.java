@@ -19,10 +19,10 @@ public class UserDAO {
 
     @SneakyThrows
     public Optional<User> getUserByLogin(String login) {
-        String sql = "SELECT * FROM user WHERE login=?";
+        String getUserByLogin = "SELECT * FROM user WHERE login=?";
         User foundUser;
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(getUserByLogin)) {
             preparedStatement.setString(1, login);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
