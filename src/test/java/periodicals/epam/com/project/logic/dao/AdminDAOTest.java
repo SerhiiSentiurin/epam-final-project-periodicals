@@ -177,8 +177,8 @@ public class AdminDAOTest {
 
     @Test
     public void getAllReadersTest() throws SQLException {
-        Account account1 = new Account(1L, 50);
-        Account account2 = new Account(2L, 60);
+        Account account1 = new Account(1L, 50d);
+        Account account2 = new Account(2L, 60d);
         Reader reader1 = new Reader();
         Reader reader2 = new Reader();
         reader1.setId(3L);

@@ -76,6 +76,5 @@ public class SecurityFilter implements Filter {
     private boolean hasRole(RequestMatcher authorizationMatcher, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         return session != null && authorizationMatcher.hasRole((User) session.getAttribute("user"));
-
     }
 }

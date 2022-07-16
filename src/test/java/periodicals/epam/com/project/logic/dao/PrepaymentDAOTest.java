@@ -1,12 +1,13 @@
 package periodicals.epam.com.project.logic.dao;
 
-import com.oracle.wls.shaded.org.apache.regexp.RE;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import periodicals.epam.com.project.logic.entity.Account;
+import periodicals.epam.com.project.logic.entity.Periodical;
 import periodicals.epam.com.project.logic.entity.dto.PrepaymentDTO;
 import periodicals.epam.com.project.logic.logicExeption.ReaderException;
 
@@ -28,13 +29,20 @@ public class PrepaymentDAOTest {
     @Mock
     private PreparedStatement preparedStatement1;
     @Mock
+    private PreparedStatement preparedStatement2;
+    @Mock
+    private PreparedStatement preparedStatement3;
+    @Mock
     private Statement statement;
+    @Mock
+    private ResultSet resultSet;
 
     @InjectMocks
     private PrepaymentDAO dao;
 
     private static final Long READER_ID = 1L;
     private static final Long PERIODICAL_ID = 1L;
+    private static final Long ACCOUNT_ID = 1L;
     private static final PrepaymentDTO dto = new PrepaymentDTO(30, READER_ID,PERIODICAL_ID,50d);
     private static final String ADD_SUBSCRIPTION = "INSERT INTO periodicals (reader_id, periodical_id) VALUES (?,?)";
     private static final String UPDATE_ACCOUNT = "UPDATE account INNER JOIN reader ON account.id = reader.account_id SET "+
@@ -43,19 +51,45 @@ public class PrepaymentDAOTest {
             "(curdate(), adddate(start_date, INTERVAL " + dto.getDurationOfSubscription() +" DAY), " + dto.getPeriodicalId() + ", " + dto.getReaderId() + ");";
     private static final String DELETE_FROM_PERIODICALS = "DELETE FROM periodicals WHERE reader_id = ? AND periodical_id = ?";
     private static final String DELETE_FROM_PREPAYMENTS = "DELETE FROM prepayment WHERE reader_id = ? AND periodical_id = ?";
+    private static final String GET_PERIODICAL_COST = "SELECT cost FROM periodical WHERE id = ?";
+    private static final String GET_AMOUNT_FROM_ACCOUNT = "SELECT account.id, amount FROM account JOIN reader ON reader.account_id = account.id WHERE reader.id = ?";
 
     @Before
     public void setConnection() throws SQLException {
         when(dataSource.getConnection()).thenReturn(connection);
     }
 
-    //дичь
     @Test
     public void addSubscriptionWhenTransactionCommitTest()throws SQLException {
         when(connection.prepareStatement(ADD_SUBSCRIPTION)).thenReturn(preparedStatement);
         when(connection.prepareStatement(UPDATE_ACCOUNT)).thenReturn(preparedStatement1);
         when(connection.createStatement()).thenReturn(statement);
         when(statement.execute(UPDATE_PREPAYMENT)).thenReturn(true);
+
+        Periodical expectedPeriodical = new Periodical();
+        expectedPeriodical.setCost(50d);
+        when(connection.prepareStatement(GET_PERIODICAL_COST)).thenReturn(preparedStatement2);
+        when(preparedStatement2.executeQuery()).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getDouble("cost")).thenReturn(expectedPeriodical.getCost());
+        Double resultCost = dao.getPeriodicalCost(PERIODICAL_ID);
+        assertEquals(expectedPeriodical.getCost(),resultCost);
+        verify(preparedStatement2).setLong(1,PERIODICAL_ID);
+
+        Account expectedAccount = new Account();
+        expectedAccount.setId(ACCOUNT_ID);
+        expectedAccount.setAmountOfMoney(50d);
+        when(connection.prepareStatement(GET_AMOUNT_FROM_ACCOUNT)).thenReturn(preparedStatement3);
+        when(preparedStatement3.executeQuery()).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getLong("id")).thenReturn(ACCOUNT_ID);
+        when(resultSet.getDouble("amount")).thenReturn(expectedAccount.getAmountOfMoney());
+        Double resultAmount = dao.getAmountFromAccount(READER_ID);
+        assertEquals(expectedAccount.getAmountOfMoney(),resultAmount);
+        verify(preparedStatement3).setLong(1,READER_ID);
+
+        dto.setDurationOfSubscription(30);
+        dao.checkAccountAmount(dto);
 
         PrepaymentDTO resultDto = dao.addSubscription(dto);
         assertNotNull(resultDto);
@@ -70,12 +104,162 @@ public class PrepaymentDAOTest {
         verify(statement).execute(UPDATE_PREPAYMENT);
         verify(connection).commit();
         verify(preparedStatement).close();
+    }
+
+    @Test(expected = ReaderException.class)
+    public void addSubscriptionWhenTransactionRollbackTest()throws SQLException{
+        when(connection.prepareStatement(ADD_SUBSCRIPTION)).thenReturn(preparedStatement);
+        when(preparedStatement.execute()).thenThrow(ReaderException.class);
+
+        Periodical expectedPeriodical = new Periodical();
+        expectedPeriodical.setCost(50d);
+        when(connection.prepareStatement(GET_PERIODICAL_COST)).thenReturn(preparedStatement2);
+        when(preparedStatement2.executeQuery()).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getDouble("cost")).thenReturn(expectedPeriodical.getCost());
+        Double resultCost = dao.getPeriodicalCost(PERIODICAL_ID);
+        assertEquals(expectedPeriodical.getCost(),resultCost);
+        verify(preparedStatement2).setLong(1,PERIODICAL_ID);
+
+        Account expectedAccount = new Account();
+        expectedAccount.setId(ACCOUNT_ID);
+        expectedAccount.setAmountOfMoney(50d);
+        when(connection.prepareStatement(GET_AMOUNT_FROM_ACCOUNT)).thenReturn(preparedStatement3);
+        when(preparedStatement3.executeQuery()).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getLong("id")).thenReturn(ACCOUNT_ID);
+        when(resultSet.getDouble("amount")).thenReturn(expectedAccount.getAmountOfMoney());
+        Double resultAmount = dao.getAmountFromAccount(READER_ID);
+        assertEquals(expectedAccount.getAmountOfMoney(),resultAmount);
+        verify(preparedStatement3).setLong(1,READER_ID);
+
+        dao.checkAccountAmount(dto);
+        dao.addSubscription(dto);
+
+        verify(connection).setAutoCommit(false);
+        verify(preparedStatement).setLong(1,dto.getReaderId());
+        verify(preparedStatement).setLong(2,dto.getPeriodicalId());
+        verify(preparedStatement).execute();
+        verify(preparedStatement).close();
         verify(connection).close();
+        verify(connection).rollback();
     }
 
     @Test
-    public void addSubscriptionWhenTransactionRollbackTest()throws SQLException{
+    public void checkAccountAmount()throws SQLException{
+        Periodical expectedPeriodical = new Periodical();
+        expectedPeriodical.setCost(50d);
+        when(connection.prepareStatement(GET_PERIODICAL_COST)).thenReturn(preparedStatement);
+        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getDouble("cost")).thenReturn(expectedPeriodical.getCost());
+        Double resultCost = dao.getPeriodicalCost(PERIODICAL_ID);
+        assertEquals(expectedPeriodical.getCost(),resultCost);
+        verify(preparedStatement).setLong(1,PERIODICAL_ID);
 
+        Account expectedAccount = new Account();
+        expectedAccount.setId(ACCOUNT_ID);
+        expectedAccount.setAmountOfMoney(50d);
+        when(connection.prepareStatement(GET_AMOUNT_FROM_ACCOUNT)).thenReturn(preparedStatement1);
+        when(preparedStatement1.executeQuery()).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getLong("id")).thenReturn(ACCOUNT_ID);
+        when(resultSet.getDouble("amount")).thenReturn(expectedAccount.getAmountOfMoney());
+        Double resultAmount = dao.getAmountFromAccount(READER_ID);
+        assertEquals(expectedAccount.getAmountOfMoney(),resultAmount);
+        verify(preparedStatement1).setLong(1,READER_ID);
+
+        dao.checkAccountAmount(dto);
+    }
+
+    @Test(expected = ReaderException.class)
+    public void checkAccountAmountWhenNotEnoughMoney()throws SQLException{
+        Periodical expectedPeriodical = new Periodical();
+        expectedPeriodical.setCost(50d);
+        when(connection.prepareStatement(GET_PERIODICAL_COST)).thenReturn(preparedStatement);
+        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getDouble("cost")).thenReturn(expectedPeriodical.getCost());
+        Double resultCost = dao.getPeriodicalCost(PERIODICAL_ID);
+        assertEquals(expectedPeriodical.getCost(),resultCost);
+        verify(preparedStatement).setLong(1,PERIODICAL_ID);
+
+        Account expectedAccount = new Account();
+        expectedAccount.setId(ACCOUNT_ID);
+        expectedAccount.setAmountOfMoney(10d);
+        when(connection.prepareStatement(GET_AMOUNT_FROM_ACCOUNT)).thenReturn(preparedStatement1);
+        when(preparedStatement1.executeQuery()).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getLong("id")).thenReturn(ACCOUNT_ID);
+        when(resultSet.getDouble("amount")).thenReturn(expectedAccount.getAmountOfMoney());
+        Double resultAmount = dao.getAmountFromAccount(READER_ID);
+        assertEquals(expectedAccount.getAmountOfMoney(),resultAmount);
+        verify(preparedStatement1).setLong(1,READER_ID);
+
+        dao.checkAccountAmount(dto);
+    }
+
+    @Test(expected = ReaderException.class)
+    public void checkAccountAmountWhenNotEnoughMoneyForYearSubscription()throws SQLException{
+        Periodical expectedPeriodical = new Periodical();
+        expectedPeriodical.setCost(50d);
+        Double yearCost = expectedPeriodical.getCost()*12*0.9;
+        when(connection.prepareStatement(GET_PERIODICAL_COST)).thenReturn(preparedStatement);
+        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getDouble("cost")).thenReturn(yearCost);
+        Double resultCost = dao.getPeriodicalCost(PERIODICAL_ID);
+        assertEquals(yearCost,resultCost);
+        verify(preparedStatement).setLong(1,PERIODICAL_ID);
+
+        Account expectedAccount = new Account();
+        expectedAccount.setId(ACCOUNT_ID);
+        expectedAccount.setAmountOfMoney(50d);
+        when(connection.prepareStatement(GET_AMOUNT_FROM_ACCOUNT)).thenReturn(preparedStatement1);
+        when(preparedStatement1.executeQuery()).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getLong("id")).thenReturn(ACCOUNT_ID);
+        when(resultSet.getDouble("amount")).thenReturn(expectedAccount.getAmountOfMoney());
+        Double resultAmount = dao.getAmountFromAccount(READER_ID);
+        assertEquals(expectedAccount.getAmountOfMoney(),resultAmount);
+        verify(preparedStatement1).setLong(1,READER_ID);
+
+        dto.setDurationOfSubscription(365);
+        dao.checkAccountAmount(dto);
+    }
+
+    @Test
+    public void getPeriodicalsCostTest()throws SQLException{
+        Periodical expectedPeriodical = new Periodical();
+        expectedPeriodical.setCost(50d);
+
+        when(connection.prepareStatement(GET_PERIODICAL_COST)).thenReturn(preparedStatement);
+        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getDouble("cost")).thenReturn(expectedPeriodical.getCost());
+
+        Double resultCost = dao.getPeriodicalCost(PERIODICAL_ID);
+        assertEquals(expectedPeriodical.getCost(),resultCost);
+
+        verify(preparedStatement).setLong(1,PERIODICAL_ID);
+    }
+
+    @Test
+    public void getAmountFromAccountTest()throws SQLException{
+        Account expectedAccount = new Account();
+        expectedAccount.setId(ACCOUNT_ID);
+        expectedAccount.setAmountOfMoney(50d);
+
+        when(connection.prepareStatement(GET_AMOUNT_FROM_ACCOUNT)).thenReturn(preparedStatement);
+        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getLong("id")).thenReturn(ACCOUNT_ID);
+        when(resultSet.getDouble("amount")).thenReturn(expectedAccount.getAmountOfMoney());
+
+        Double resultAmount = dao.getAmountFromAccount(READER_ID);
+        assertEquals(expectedAccount.getAmountOfMoney(),resultAmount);
+
+        verify(preparedStatement).setLong(1,READER_ID);
     }
 
     @Test

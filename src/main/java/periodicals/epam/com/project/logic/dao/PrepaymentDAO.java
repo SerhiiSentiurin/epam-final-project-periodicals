@@ -104,10 +104,10 @@ public class PrepaymentDAO {
 
     @SneakyThrows
     protected Double getPeriodicalCost(Long periodicalId) {
-        String selectCost = "SELECT cost FROM periodical WHERE id = ?";
+        String getPeriodicalCost = "SELECT cost FROM periodical WHERE id = ?";
         Periodical periodical = new Periodical();
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(selectCost)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(getPeriodicalCost)) {
             preparedStatement.setLong(1, periodicalId);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {

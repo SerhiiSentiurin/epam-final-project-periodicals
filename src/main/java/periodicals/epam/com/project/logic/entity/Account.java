@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Account {
     private long id;
-    private double amountOfMoney;
+    private Double amountOfMoney;
 }

@@ -30,6 +30,7 @@ public class ConfigLoader {
                     .forEachRemaining(
                             name -> configs.put(name, property.getProperty(name))
                     );
+            log.info("configs was loaded successfully");
         } catch (IOException e) {
             log.error(e.getMessage());
         }

@@ -3,7 +3,6 @@ package periodicals.epam.com.project.infrastructure.web.filter.encoding;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 
-
 import java.io.IOException;
 
 public class EncodingFilter implements Filter {
