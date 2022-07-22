@@ -29,6 +29,4 @@ public class PrepaymentController {
         modelAndView.setRedirect(true);
         return modelAndView;
     }
-
-
 }

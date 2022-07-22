@@ -31,6 +31,6 @@ public class LocaleSessionListener implements HttpSessionListener {
 
     @Override
     public void sessionDestroyed(HttpSessionEvent httpSessionEvent) {
-        log.info("session destroyed");
+        log.info("Session destroyed");
     }
 }

@@ -22,5 +22,4 @@ public class ReaderService {
         return readerDAO.getReaderById(id)
                 .orElseThrow(() -> new ReaderException("can't find reader"));
     }
-
 }

@@ -32,12 +32,11 @@ public class AccountDAOTest {
     @InjectMocks
     private AccountDAO dao;
 
-    private static final String TOP_UP_ACCOUNT_AMOUNT = "UPDATE account INNER JOIN reader ON account.id = reader.account_id "+
+    private static final String TOP_UP_ACCOUNT_AMOUNT = "UPDATE account INNER JOIN reader ON account.id = reader.account_id " +
             "SET account.amount = ? WHERE reader.id = ?";
-    private static final String GET_AMOUNT_OF_MONEY_BY_READER_ID = "SELECT account.id, amount FROM account JOIN reader ON "+
+    private static final String GET_AMOUNT_OF_MONEY_BY_READER_ID = "SELECT account.id, amount FROM account JOIN reader ON " +
             "reader.account_id = account.id WHERE reader.id = ?";
     private static final Double AMOUNT_OF_MONEY = 50d;
-    private static final Double ZERO_AMOUNT_OF_MONEY = 0d;
     private static final Long READER_ID = 2L;
     private static final Long PERIODICAL_ID = 5L;
     private static final Long ACCOUNT_ID = 1L;
@@ -64,20 +63,22 @@ public class AccountDAOTest {
     }
 
     @Test
-    public void getAmountOfMoneyByReaderIdWhenResultIsEmpty() throws SQLException {
-        AccountDTO dto = new AccountDTO(AMOUNT_OF_MONEY, READER_ID, PERIODICAL_ID);
+    public void getAmountOfMoneyByReaderIdWhenResultIsEmptyTest() throws SQLException {
+        AccountDTO dto = new AccountDTO(0d,READER_ID, PERIODICAL_ID);
 
         when(connection.prepareStatement(GET_AMOUNT_OF_MONEY_BY_READER_ID)).thenReturn(preparedStatement);
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(false);
 
         Double amountOfMoneyByReaderId = dao.getAmountOfMoneyByReaderId(dto);
-        assertEquals(ZERO_AMOUNT_OF_MONEY, amountOfMoneyByReaderId);
+        assertNull(amountOfMoneyByReaderId);
+
+        verify(preparedStatement).setLong(1, dto.getReaderId());
     }
 
     @Test
     public void TopUpAccountAmountTest() throws SQLException {
-        AccountDTO dto = new AccountDTO(AMOUNT_OF_MONEY,READER_ID,PERIODICAL_ID);
+        AccountDTO dto = new AccountDTO(AMOUNT_OF_MONEY, READER_ID, PERIODICAL_ID);
         when(connection.prepareStatement(TOP_UP_ACCOUNT_AMOUNT)).thenReturn(preparedStatement);
         when(connection.prepareStatement(GET_AMOUNT_OF_MONEY_BY_READER_ID)).thenReturn(preparedStatement);
 
@@ -90,6 +91,6 @@ public class AccountDAOTest {
         Double amountOfMoneyByReaderId = dao.getAmountOfMoneyByReaderId(dto);
         assertEquals(AMOUNT_OF_MONEY, amountOfMoneyByReaderId);
         AccountDTO resultDto = dao.topUpAccountAmount(dto);
-        assertEquals(resultDto,dto);
+        assertEquals(resultDto, dto);
     }
 }

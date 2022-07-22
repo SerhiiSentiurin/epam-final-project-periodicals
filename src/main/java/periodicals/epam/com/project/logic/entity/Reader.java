@@ -8,8 +8,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Reader extends User {
-    private Account account; //cчёт
-   // private List<Periodical> periodicals;
+    private Account account;
     private boolean lock;
 
     public Reader() {

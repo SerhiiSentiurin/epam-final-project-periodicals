@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Prepayment {
-    private Long id;            //primary key
+    private Long id;
     private String startDate;
     private String dueDate;
-    private Long periodicalId; // foreign key to periodical
-    private Long readerId; // foreign key to reader
+    private Long periodicalId;
+    private Long readerId;
 }

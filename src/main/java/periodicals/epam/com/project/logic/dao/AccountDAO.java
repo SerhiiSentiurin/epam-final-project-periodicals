@@ -45,6 +45,4 @@ public class AccountDAO {
         }
         return readerAccount.getAmountOfMoney();
     }
-
-
 }

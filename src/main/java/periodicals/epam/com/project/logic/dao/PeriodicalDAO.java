@@ -31,7 +31,6 @@ public class PeriodicalDAO {
                 boolean isDeleted = resultSet.getBoolean("isDeleted");
                 Periodical periodical = new Periodical(id, name, topic, cost, description, isDeleted);
                 listOfPeriodicals.add(periodical);
-
             }
             return listOfPeriodicals;
         }

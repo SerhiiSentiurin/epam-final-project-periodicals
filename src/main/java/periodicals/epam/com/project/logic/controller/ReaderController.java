@@ -16,7 +16,6 @@ public class ReaderController {
     private final PeriodicalService periodicalService;
     private final QueryParameterHandler queryParameterHandler;
 
-
     public ModelAndView getReaderById(HttpServletRequest request) {
         long readerId = Long.parseLong(request.getParameter("readerId"));
         ModelAndView modelAndView = new ModelAndView();

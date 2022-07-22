@@ -1,6 +1,5 @@
 package periodicals.epam.com.project.logic.dao;
 
-import liquibase.pro.packaged.R;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import periodicals.epam.com.project.logic.entity.Account;
@@ -13,9 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 public class AdminDAO {
@@ -37,7 +34,6 @@ public class AdminDAO {
                 boolean isDeleted = resultSet.getBoolean("isDeleted");
                 Periodical periodical = new Periodical(id, name, topic, cost, description, isDeleted);
                 listOfPeriodicals.add(periodical);
-
             }
             return listOfPeriodicals;
         }
@@ -165,5 +161,4 @@ public class AdminDAO {
             return preparedStatement.execute();
         }
     }
-
 }

@@ -11,5 +11,6 @@
                 error: ${message}
             </jsp:text>
         </p>
+        <input type="button" class="btn btn-secondary" onclick="history.back();" value='Back'>
     </body>
 </html>

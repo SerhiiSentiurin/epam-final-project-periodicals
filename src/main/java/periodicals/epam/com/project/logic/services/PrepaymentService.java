@@ -14,6 +14,4 @@ public class PrepaymentService {
     public boolean deleteSubscription(Long readerId, Long periodicalId){
         return prepaymentDAO.deleteSubscription(readerId,periodicalId);
     }
-
-
 }

@@ -1,4 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="/WEB-INF/tag/language.tld" prefix="lang" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -7,10 +8,8 @@
     </head>
     <body>
         <p>
-            <jsp:text>
-                error: Forbidden
-            </jsp:text>
+            <lang:print message = "error.forbidden.jsp.access_forbidden"/>
         </p>
-        <input type="button" class="btn btn-secondary" onclick="history.back();" value='Back'>
+        <button onclick="location.href='/app'"><lang:print message = "error.forbidden.jsp.back"/></button>
     </body>
 </html>

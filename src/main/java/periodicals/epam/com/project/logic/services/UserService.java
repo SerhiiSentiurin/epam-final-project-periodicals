@@ -21,7 +21,7 @@ public class UserService {
         if (!user.getPassword().equals(userDto.getPassword())) {
             throw new ApplicationException("password is incorrect");
         }
-        log.info("user: "+ userDto.getLogin() + "was entered");
+        log.info("user: "+ userDto.getLogin() + " was entered");
         return user;
     }
 }
