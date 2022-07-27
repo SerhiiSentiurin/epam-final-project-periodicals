@@ -18,6 +18,9 @@ import java.sql.Statement;
 @RequiredArgsConstructor
 public class PrepaymentDAO {
     private final DataSource dataSource;
+    private static final Integer MONTHS_IN_YEAR = 12;
+    private static final Integer DAYS_IN_MONTH = 30;
+    private static final Double DISCOUNT = 0.9d;
 
     public PrepaymentDTO addSubscription(PrepaymentDTO dto) {
         String addSubscription = "INSERT INTO periodicals (reader_id, periodical_id) VALUES (?,?)";
@@ -55,13 +58,13 @@ public class PrepaymentDAO {
 
     protected void checkAccountAmount(PrepaymentDTO dto){
         Double costPeerMonth = getPeriodicalCost(dto.getPeriodicalId());
-        Double costPeerYear = (getPeriodicalCost(dto.getPeriodicalId()) * 12) * 0.9; // with 10% discount
+        Double costPeerYear = (getPeriodicalCost(dto.getPeriodicalId()) * MONTHS_IN_YEAR) * DISCOUNT; // with 10% discount
         Double accountBalance = getAmountFromAccount(dto.getReaderId());
 
-        if ((costPeerMonth > accountBalance) && (dto.getDurationOfSubscription() <= 30)) {
+        if ((costPeerMonth > accountBalance) && (dto.getDurationOfSubscription() <= DAYS_IN_MONTH)) {
             log.error("reader have not enough money on the account");
             throw new ReaderException("Not enough money on the account");
-        } else if ((costPeerYear > accountBalance) && (dto.getDurationOfSubscription() > 30)) {
+        } else if ((costPeerYear > accountBalance) && (dto.getDurationOfSubscription() > DAYS_IN_MONTH)) {
             log.error("reader have not enough money on the account");
             throw new ReaderException("Not enough money on the account, try to get month subscription or top up your account!");
         } else if (dto.getDurationOfSubscription() > 30) {
