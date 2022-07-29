@@ -66,448 +66,448 @@ public class PeriodicalDAOTest {
         when(dataSource.getConnection()).thenReturn(connection);
     }
 
-    @Test
-    public void getAllPeriodicalsTest() throws SQLException {
-        List<Periodical> expectedList = new ArrayList<>();
-        expectedList.add(periodical1);
-        expectedList.add(periodical2);
-
-        when(connection.createStatement()).thenReturn(statement);
-        when(statement.executeQuery(GET_ALL_PERIODICALS)).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
-        when(resultSet.getLong("id")).thenReturn(PERIODICAL_ID).thenReturn(2L);
-        when(resultSet.getString("name")).thenReturn("name1").thenReturn("name2");
-        when(resultSet.getString("topic")).thenReturn("topic1").thenReturn("topic2");
-        when(resultSet.getDouble("cost")).thenReturn(10d).thenReturn(20d);
-        when(resultSet.getString("description")).thenReturn("description1").thenReturn("description2");
-        when(resultSet.getBoolean("isDeleted")).thenReturn(false).thenReturn(false);
-
-        List<Periodical> resultList = dao.getAllPeriodicals();
-        assertEquals(expectedList, resultList);
-    }
-
-    @Test
-    public void getAllPeriodicalsEmptyTest() throws SQLException {
-        List<Periodical> expectedList = Collections.emptyList();
-
-        when(connection.createStatement()).thenReturn(statement);
-        when(statement.executeQuery(GET_ALL_PERIODICALS)).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(false);
-
-        List<Periodical> resultList = dao.getAllPeriodicals();
-        assertEquals(expectedList, resultList);
-    }
-
-    @Test
-    public void getPeriodicalByTopicTest() throws SQLException {
-        List<Periodical> expectedList = new ArrayList<>();
-        periodical1.setTopic("topic");
-        periodical2.setTopic("topic");
-        expectedList.add(periodical1);
-        expectedList.add(periodical2);
-
-        when(connection.prepareStatement(GET_PERIODICAL_BY_TOPIC)).thenReturn(preparedStatement);
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
-        when(resultSet.getLong("id")).thenReturn(PERIODICAL_ID).thenReturn(2L);
-        when(resultSet.getString("name")).thenReturn("name1").thenReturn("name2");
-        when(resultSet.getDouble("cost")).thenReturn(10d).thenReturn(20d);
-        when(resultSet.getString("description")).thenReturn("description1").thenReturn("description2");
-        when(resultSet.getBoolean("isDeleted")).thenReturn(false).thenReturn(false);
-
-        List<Periodical> resultList = dao.getPeriodicalsByTopic("topic");
-        assertEquals(expectedList, resultList);
-
-        verify(preparedStatement).setString(1, "topic");
-    }
-
-    @Test
-    public void getPeriodicalByTopicEmptyTest() throws SQLException {
-        List<Periodical> expectedList = Collections.emptyList();
-
-        when(connection.prepareStatement(GET_PERIODICAL_BY_TOPIC)).thenReturn(preparedStatement);
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(false);
-
-        List<Periodical> resultList = dao.getPeriodicalsByTopic("topic");
-        assertEquals(expectedList, resultList);
-
-        verify(preparedStatement).setString(1, "topic");
-    }
-
-    @Test
-    public void getPeriodicalByNameTest() throws SQLException {
-        List<Periodical> expectedList = new ArrayList<>();
-        periodical1.setName("name");
-        periodical2.setName("name");
-        expectedList.add(periodical1);
-        expectedList.add(periodical2);
-
-        when(connection.prepareStatement(GET_PERIODICAL_BY_NAME)).thenReturn(preparedStatement);
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
-        when(resultSet.getLong("id")).thenReturn(PERIODICAL_ID).thenReturn(2L);
-        when(resultSet.getString("name")).thenReturn("name").thenReturn("name");
-        when(resultSet.getString("topic")).thenReturn("topic1").thenReturn("topic2");
-        when(resultSet.getDouble("cost")).thenReturn(10d).thenReturn(20d);
-        when(resultSet.getString("description")).thenReturn("description1").thenReturn("description2");
-        when(resultSet.getBoolean("isDeleted")).thenReturn(false).thenReturn(false);
-
-        List<Periodical> resultList = dao.getPeriodicalByName("name");
-        assertEquals(expectedList, resultList);
-
-        verify(preparedStatement).setString(1, "%name%");
-    }
-
-    @Test
-    public void getPeriodicalByNameEmptyTest() throws SQLException {
-        List<Periodical> expectedList = Collections.emptyList();
-
-        when(connection.prepareStatement(GET_PERIODICAL_BY_NAME)).thenReturn(preparedStatement);
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(false);
-
-        List<Periodical> resultList = dao.getPeriodicalByName("name");
-        assertEquals(expectedList, resultList);
-
-        verify(preparedStatement).setString(1, "%name%");
-    }
-
-    @Test
-    public void getPeriodicalsByReaderIdTest() throws SQLException {
-        List<Periodical> expectedList = new ArrayList<>();
-        expectedList.add(periodical1);
-        expectedList.add(periodical2);
-
-        when(connection.prepareStatement(GET_PERIODICALS_BY_READER_ID)).thenReturn(preparedStatement);
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
-        when(resultSet.getLong("periodical.id")).thenReturn(PERIODICAL_ID).thenReturn(2L);
-        when(resultSet.getString("name")).thenReturn("name1").thenReturn("name2");
-        when(resultSet.getString("topic")).thenReturn("topic1").thenReturn("topic2");
-        when(resultSet.getDouble("cost")).thenReturn(10d).thenReturn(20d);
-        when(resultSet.getString("description")).thenReturn("description1").thenReturn("description2");
-        when(resultSet.getBoolean("isDeleted")).thenReturn(false).thenReturn(false);
-
-        List<Periodical> resultList = dao.getPeriodicalsByReaderId(READER_ID);
-        assertEquals(expectedList, resultList);
-
-        verify(preparedStatement).setLong(1, READER_ID);
-    }
-
-    @Test
-    public void getPeriodicalsByReaderIdEmptyTest() throws SQLException {
-        List<Periodical> expectedList = Collections.emptyList();
-
-        when(connection.prepareStatement(GET_PERIODICALS_BY_READER_ID)).thenReturn(preparedStatement);
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(false);
-
-        List<Periodical> resultList = dao.getPeriodicalsByReaderId(READER_ID);
-        assertEquals(expectedList, resultList);
-
-        verify(preparedStatement).setLong(1, READER_ID);
-    }
-
-    @Test
-    public void getPeriodicalsByTopicByReaderIdTest() throws SQLException {
-        Map<Periodical, Prepayment> expectedMap = new HashMap<>();
-        periodical1.setTopic("topic");
-        periodical2.setTopic("topic");
-        prepayment1.setReaderId(READER_ID);
-        prepayment2.setReaderId(READER_ID);
-        expectedMap.put(periodical1, prepayment1);
-        expectedMap.put(periodical2, prepayment2);
-
-        when(connection.prepareStatement(GET_PERIODICAL_BY_TOPIC_BY_READER_ID)).thenReturn(preparedStatement);
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
-        when(resultSet.getLong("periodical.id")).thenReturn(PERIODICAL_ID).thenReturn(2L);
-        when(resultSet.getString("name")).thenReturn("name1").thenReturn("name2");
-        when(resultSet.getDouble("cost")).thenReturn(10d).thenReturn(20d);
-        when(resultSet.getString("description")).thenReturn("description1").thenReturn("description2");
-        when(resultSet.getLong("prepayment.id")).thenReturn(1L).thenReturn(2L);
-        when(resultSet.getString("start_date")).thenReturn("startDate1").thenReturn("startDate2");
-        when(resultSet.getString("due_date")).thenReturn("dueDate1").thenReturn("dueDate2");
-        when(resultSet.getBoolean("isDeleted")).thenReturn(false).thenReturn(false);
-
-        Map<Periodical, Prepayment> resultMap = dao.getPeriodicalsByTopicByReaderId("topic", READER_ID);
-        assertEquals(expectedMap, resultMap);
-
-        verify(preparedStatement).setLong(1, READER_ID);
-        verify(preparedStatement).setString(2, "topic");
-    }
-
-    @Test
-    public void getPeriodicalsByTopicByReaderIdEmptyTest() throws SQLException {
-        Map<Periodical, Prepayment> expectedMap = Collections.emptyMap();
-
-        when(connection.prepareStatement(GET_PERIODICAL_BY_TOPIC_BY_READER_ID)).thenReturn(preparedStatement);
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(false);
-
-        Map<Periodical, Prepayment> resultMap = dao.getPeriodicalsByTopicByReaderId("topic", READER_ID);
-        assertEquals(expectedMap, resultMap);
-
-        verify(preparedStatement).setLong(1, READER_ID);
-        verify(preparedStatement).setString(2, "topic");
-    }
-
-    @Test
-    public void getPrepaymentsByReaderIdTest() throws SQLException {
-        List<Prepayment> expectedList = new ArrayList<>();
-        prepayment1.setReaderId(READER_ID);
-        prepayment2.setReaderId(READER_ID);
-        expectedList.add(prepayment1);
-        expectedList.add(prepayment2);
-
-        when(connection.prepareStatement(GET_PREPAYMENTS_BY_READER_ID)).thenReturn(preparedStatement);
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
-        when(resultSet.getLong("id")).thenReturn(1L).thenReturn(2L);
-        when(resultSet.getString("start_date")).thenReturn("startDate1").thenReturn("startDate2");
-        when(resultSet.getString("due_date")).thenReturn("dueDate1").thenReturn("dueDate2");
-        when(resultSet.getLong("periodical_id")).thenReturn(PERIODICAL_ID).thenReturn(2L);
-
-        List<Prepayment> resultList = dao.getPrepaymentsByReaderId(READER_ID);
-        assertEquals(expectedList, resultList);
-
-        verify(preparedStatement).setLong(1, READER_ID);
-    }
-
-    @Test
-    public void getPrepaymentsByReaderIdEmptyTest() throws SQLException {
-        List<Prepayment> expectedList = Collections.emptyList();
-
-        when(connection.prepareStatement(GET_PREPAYMENTS_BY_READER_ID)).thenReturn(preparedStatement);
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(false);
-        List<Prepayment> resultList = dao.getPrepaymentsByReaderId(READER_ID);
-        assertEquals(expectedList, resultList);
-
-        verify(preparedStatement).setLong(1, READER_ID);
-    }
-
-    @Test
-    public void findPeriodicalByNameByReaderIdTest() throws SQLException {
-        Map<Periodical, Prepayment> expectedMap = new HashMap<>();
-        periodical1.setName("name");
-        periodical2.setName("name");
-        prepayment1.setReaderId(READER_ID);
-        prepayment2.setReaderId(READER_ID);
-        expectedMap.put(periodical1, prepayment1);
-        expectedMap.put(periodical2, prepayment2);
-
-        when(connection.prepareStatement(FIND_PERIODICALS_BY_NAME_BY_READER_ID)).thenReturn(preparedStatement);
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
-        when(resultSet.getLong("periodical.id")).thenReturn(PERIODICAL_ID).thenReturn(2L);
-        when(resultSet.getString("name")).thenReturn("name").thenReturn("name");
-        when(resultSet.getString("topic")).thenReturn("topic1").thenReturn("topic2");
-        when(resultSet.getDouble("cost")).thenReturn(10d).thenReturn(20d);
-        when(resultSet.getString("description")).thenReturn("description1").thenReturn("description2");
-        when(resultSet.getLong("prepayment.id")).thenReturn(1L).thenReturn(2L);
-        when(resultSet.getString("start_date")).thenReturn("startDate1").thenReturn("startDate2");
-        when(resultSet.getString("due_date")).thenReturn("dueDate1").thenReturn("dueDate2");
-        when(resultSet.getBoolean("isDeleted")).thenReturn(false).thenReturn(false);
-
-        Map<Periodical, Prepayment> resultMap = dao.findPeriodicalsByNameByReaderId("name", READER_ID);
-        assertEquals(expectedMap, resultMap);
-
-        verify(preparedStatement).setLong(1, READER_ID);
-        verify(preparedStatement).setString(2, "%name%");
-
-    }
-
-    @Test
-    public void findPeriodicalByNameByReaderIdEmptyTest() throws SQLException {
-        Map<Periodical, Prepayment> expectedMap = Collections.emptyMap();
-
-        when(connection.prepareStatement(FIND_PERIODICALS_BY_NAME_BY_READER_ID)).thenReturn(preparedStatement);
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(false);
-
-        Map<Periodical, Prepayment> resultMap = dao.findPeriodicalsByNameByReaderId("name", READER_ID);
-        assertEquals(expectedMap, resultMap);
-
-        verify(preparedStatement).setLong(1, READER_ID);
-        verify(preparedStatement).setString(2, "%name%");
-
-    }
-
-    @Test
-    public void getPeriodicalsForSubscribingTest() throws SQLException {
-        List<Periodical> expectedList = new ArrayList<>();
-        List<Long> listOfSubscribedPeriodicals = new ArrayList<>();
-        listOfSubscribedPeriodicals.add(PERIODICAL_ID);
-        expectedList.add(periodical2);
-
-        when(connection.createStatement()).thenReturn(statement);
-        when(statement.executeQuery(GET_PERIODICALS_FOR_SUBSCRIBING)).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(true).thenReturn(false);
-        when(resultSet.getLong("id")).thenReturn(2L);
-        when(resultSet.getString("name")).thenReturn("name2");
-        when(resultSet.getString("topic")).thenReturn("topic2");
-        when(resultSet.getDouble("cost")).thenReturn(20d);
-        when(resultSet.getString("description")).thenReturn("description2");
-        when(resultSet.getBoolean("isDeleted")).thenReturn(false);
-
-        List<Periodical> resultList = dao.getPeriodicalsForSubscribing(listOfSubscribedPeriodicals);
-        assertEquals(expectedList, resultList);
-    }
-
-    @Test
-    public void getPeriodicalsForSubscribingEmptyTest() throws SQLException {
-        List<Periodical> expectedList = Collections.emptyList();
-        List<Long> listOfSubscribedPeriodicals = new ArrayList<>();
-        listOfSubscribedPeriodicals.add(PERIODICAL_ID);
-
-        when(connection.createStatement()).thenReturn(statement);
-        when(statement.executeQuery(GET_PERIODICALS_FOR_SUBSCRIBING)).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(false);
-
-        List<Periodical> resultList = dao.getPeriodicalsForSubscribing(listOfSubscribedPeriodicals);
-        assertEquals(expectedList, resultList);
-    }
-
-    @Test
-    public void getPeriodicalsForSubscribingForNewReaderTest() throws SQLException {
-        List<Periodical> expectedList = new ArrayList<>();
-        List<Long> listOfSubscribedPeriodicals = Collections.emptyList();
-        expectedList.add(periodical2);
-
-        when(connection.createStatement()).thenReturn(statement);
-        when(statement.executeQuery(GET_PERIODICALS_FOR_SUBSCRIBING_FOR_NEW_READER)).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(true).thenReturn(false);
-        when(resultSet.getLong("id")).thenReturn(2L);
-        when(resultSet.getString("name")).thenReturn("name2");
-        when(resultSet.getString("topic")).thenReturn("topic2");
-        when(resultSet.getDouble("cost")).thenReturn(20d);
-        when(resultSet.getString("description")).thenReturn("description2");
-        when(resultSet.getBoolean("isDeleted")).thenReturn(false);
-
-        List<Periodical> resultList = dao.getPeriodicalsForSubscribing(listOfSubscribedPeriodicals);
-        assertEquals(expectedList, resultList);
-    }
-
-    @Test
-    public void getPeriodicalsForSubscribingForNewReaderEmptyTest() throws SQLException {
-        List<Periodical> expectedList = Collections.emptyList();
-        List<Long> listOfSubscribedPeriodicals = Collections.emptyList();
-
-        when(connection.createStatement()).thenReturn(statement);
-        when(statement.executeQuery(GET_PERIODICALS_FOR_SUBSCRIBING_FOR_NEW_READER)).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(false);
-
-        List<Periodical> resultList = dao.getPeriodicalsForSubscribing(listOfSubscribedPeriodicals);
-        assertEquals(expectedList, resultList);
-    }
-
-    @Test
-    public void findPeriodicalsForSubscribingByNameTest()throws SQLException{
-        List<Periodical> expectedList = new ArrayList<>();
-        List<Long> listOfSubscribedPeriodicals = new ArrayList<>();
-        listOfSubscribedPeriodicals.add(PERIODICAL_ID);
-        periodical2.setName("name");
-        expectedList.add(periodical2);
-
-        when(connection.prepareStatement(FIND_PERIODICALS_FOR_SUBSCRIBING_BY_NAME)).thenReturn(preparedStatement);
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(true).thenReturn(false);
-        when(resultSet.getLong("id")).thenReturn(2L);
-        when(resultSet.getString("name")).thenReturn("name");
-        when(resultSet.getString("topic")).thenReturn("topic2");
-        when(resultSet.getDouble("cost")).thenReturn(20d);
-        when(resultSet.getString("description")).thenReturn("description2");
-        when(resultSet.getBoolean("isDeleted")).thenReturn(false);
-
-        List<Periodical> resultList = dao.findPeriodicalsForSubscribingByName(listOfSubscribedPeriodicals,"name");
-        assertEquals(expectedList,resultList);
-
-        verify(preparedStatement).setString(1,"%name%");
-    }
-
-    @Test
-    public void findPeriodicalsForSubscribingByNameEmptyTest()throws SQLException{
-        List<Periodical> expectedList = Collections.emptyList();
-        List<Long> listOfSubscribedPeriodicals = new ArrayList<>();
-        listOfSubscribedPeriodicals.add(PERIODICAL_ID);
-
-        when(connection.prepareStatement(FIND_PERIODICALS_FOR_SUBSCRIBING_BY_NAME)).thenReturn(preparedStatement);
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(false);
-        List<Periodical> resultList = dao.findPeriodicalsForSubscribingByName(listOfSubscribedPeriodicals,"name");
-        assertEquals(expectedList,resultList);
-
-        verify(preparedStatement).setString(1,"%name%");
-    }
-
-    @Test
-    public void findPeriodicalsForSubscribingByNameForNewReaderTest()throws SQLException{
-        List<Periodical> expectedList = new ArrayList<>();
-        List<Long> listOfSubscribedPeriodicals = Collections.emptyList();
-        periodical2.setName("name");
-        expectedList.add(periodical2);
-
-        when(connection.prepareStatement(FIND_PERIODICALS_FOR_SUBSCRIBING_BY_NAME_FOR_NEW_READER)).thenReturn(preparedStatement);
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(true).thenReturn(false);
-        when(resultSet.getLong("id")).thenReturn(2L);
-        when(resultSet.getString("name")).thenReturn("name");
-        when(resultSet.getString("topic")).thenReturn("topic2");
-        when(resultSet.getDouble("cost")).thenReturn(20d);
-        when(resultSet.getString("description")).thenReturn("description2");
-        when(resultSet.getBoolean("isDeleted")).thenReturn(false);
-
-        List<Periodical> resultList = dao.findPeriodicalsForSubscribingByName(listOfSubscribedPeriodicals,"name");
-        assertEquals(expectedList,resultList);
-
-        verify(preparedStatement).setString(1,"%name%");
-    }
-
-    @Test
-    public void findPeriodicalsForSubscribingByNameForNewReaderEmptyTest()throws SQLException{
-        List<Periodical> expectedList = Collections.emptyList();
-        List<Long> listOfSubscribedPeriodicals = Collections.emptyList();
-
-        when(connection.prepareStatement(FIND_PERIODICALS_FOR_SUBSCRIBING_BY_NAME_FOR_NEW_READER)).thenReturn(preparedStatement);
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(false);
-
-        List<Periodical> resultList = dao.findPeriodicalsForSubscribingByName(listOfSubscribedPeriodicals,"name");
-        assertEquals(expectedList,resultList);
-
-        verify(preparedStatement).setString(1,"%name%");
-    }
-
-    @Test
-    public void getPeriodicalIdByReaderIdTest()throws SQLException{
-        List<Long> expectedList = new ArrayList<>();
-        expectedList.add(PERIODICAL_ID);
-        expectedList.add(2L);
-
-        when(connection.prepareStatement(GET_PERIODICAL_ID_BY_READER_ID)).thenReturn(preparedStatement);
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
-        when(resultSet.getLong("periodical_id")).thenReturn(PERIODICAL_ID).thenReturn(2L);
-
-        List<Long> resultList = dao.getPeriodicalIdByReaderId(READER_ID);
-        assertEquals(expectedList,resultList);
-
-        verify(preparedStatement).setLong(1,READER_ID);
-    }
-
-    @Test
-    public void getPeriodicalIdByReaderIdEmptyTest()throws SQLException{
-        List<Long> expectedList = Collections.emptyList();
-
-        when(connection.prepareStatement(GET_PERIODICAL_ID_BY_READER_ID)).thenReturn(preparedStatement);
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(resultSet.next()).thenReturn(false);
-
-        List<Long> resultList = dao.getPeriodicalIdByReaderId(READER_ID);
-        assertEquals(expectedList,resultList);
-
-        verify(preparedStatement).setLong(1,READER_ID);
-    }
+//    @Test
+//    public void getAllPeriodicalsTest() throws SQLException {
+//        List<Periodical> expectedList = new ArrayList<>();
+//        expectedList.add(periodical1);
+//        expectedList.add(periodical2);
+//
+//        when(connection.createStatement()).thenReturn(statement);
+//        when(statement.executeQuery(GET_ALL_PERIODICALS)).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
+//        when(resultSet.getLong("id")).thenReturn(PERIODICAL_ID).thenReturn(2L);
+//        when(resultSet.getString("name")).thenReturn("name1").thenReturn("name2");
+//        when(resultSet.getString("topic")).thenReturn("topic1").thenReturn("topic2");
+//        when(resultSet.getDouble("cost")).thenReturn(10d).thenReturn(20d);
+//        when(resultSet.getString("description")).thenReturn("description1").thenReturn("description2");
+//        when(resultSet.getBoolean("isDeleted")).thenReturn(false).thenReturn(false);
+//
+//        List<Periodical> resultList = dao.getAllPeriodicals();
+//        assertEquals(expectedList, resultList);
+//    }
+//
+//    @Test
+//    public void getAllPeriodicalsEmptyTest() throws SQLException {
+//        List<Periodical> expectedList = Collections.emptyList();
+//
+//        when(connection.createStatement()).thenReturn(statement);
+//        when(statement.executeQuery(GET_ALL_PERIODICALS)).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(false);
+//
+//        List<Periodical> resultList = dao.getAllPeriodicals();
+//        assertEquals(expectedList, resultList);
+//    }
+//
+//    @Test
+//    public void getPeriodicalByTopicTest() throws SQLException {
+//        List<Periodical> expectedList = new ArrayList<>();
+//        periodical1.setTopic("topic");
+//        periodical2.setTopic("topic");
+//        expectedList.add(periodical1);
+//        expectedList.add(periodical2);
+//
+//        when(connection.prepareStatement(GET_PERIODICAL_BY_TOPIC)).thenReturn(preparedStatement);
+//        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
+//        when(resultSet.getLong("id")).thenReturn(PERIODICAL_ID).thenReturn(2L);
+//        when(resultSet.getString("name")).thenReturn("name1").thenReturn("name2");
+//        when(resultSet.getDouble("cost")).thenReturn(10d).thenReturn(20d);
+//        when(resultSet.getString("description")).thenReturn("description1").thenReturn("description2");
+//        when(resultSet.getBoolean("isDeleted")).thenReturn(false).thenReturn(false);
+//
+//        List<Periodical> resultList = dao.getPeriodicalsByTopic("topic");
+//        assertEquals(expectedList, resultList);
+//
+//        verify(preparedStatement).setString(1, "topic");
+//    }
+//
+//    @Test
+//    public void getPeriodicalByTopicEmptyTest() throws SQLException {
+//        List<Periodical> expectedList = Collections.emptyList();
+//
+//        when(connection.prepareStatement(GET_PERIODICAL_BY_TOPIC)).thenReturn(preparedStatement);
+//        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(false);
+//
+//        List<Periodical> resultList = dao.getPeriodicalsByTopic("topic");
+//        assertEquals(expectedList, resultList);
+//
+//        verify(preparedStatement).setString(1, "topic");
+//    }
+//
+//    @Test
+//    public void getPeriodicalByNameTest() throws SQLException {
+//        List<Periodical> expectedList = new ArrayList<>();
+//        periodical1.setName("name");
+//        periodical2.setName("name");
+//        expectedList.add(periodical1);
+//        expectedList.add(periodical2);
+//
+//        when(connection.prepareStatement(GET_PERIODICAL_BY_NAME)).thenReturn(preparedStatement);
+//        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
+//        when(resultSet.getLong("id")).thenReturn(PERIODICAL_ID).thenReturn(2L);
+//        when(resultSet.getString("name")).thenReturn("name").thenReturn("name");
+//        when(resultSet.getString("topic")).thenReturn("topic1").thenReturn("topic2");
+//        when(resultSet.getDouble("cost")).thenReturn(10d).thenReturn(20d);
+//        when(resultSet.getString("description")).thenReturn("description1").thenReturn("description2");
+//        when(resultSet.getBoolean("isDeleted")).thenReturn(false).thenReturn(false);
+//
+//        List<Periodical> resultList = dao.getPeriodicalByName("name");
+//        assertEquals(expectedList, resultList);
+//
+//        verify(preparedStatement).setString(1, "%name%");
+//    }
+//
+//    @Test
+//    public void getPeriodicalByNameEmptyTest() throws SQLException {
+//        List<Periodical> expectedList = Collections.emptyList();
+//
+//        when(connection.prepareStatement(GET_PERIODICAL_BY_NAME)).thenReturn(preparedStatement);
+//        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(false);
+//
+//        List<Periodical> resultList = dao.getPeriodicalByName("name");
+//        assertEquals(expectedList, resultList);
+//
+//        verify(preparedStatement).setString(1, "%name%");
+//    }
+//
+//    @Test
+//    public void getPeriodicalsByReaderIdTest() throws SQLException {
+//        List<Periodical> expectedList = new ArrayList<>();
+//        expectedList.add(periodical1);
+//        expectedList.add(periodical2);
+//
+//        when(connection.prepareStatement(GET_PERIODICALS_BY_READER_ID)).thenReturn(preparedStatement);
+//        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
+//        when(resultSet.getLong("periodical.id")).thenReturn(PERIODICAL_ID).thenReturn(2L);
+//        when(resultSet.getString("name")).thenReturn("name1").thenReturn("name2");
+//        when(resultSet.getString("topic")).thenReturn("topic1").thenReturn("topic2");
+//        when(resultSet.getDouble("cost")).thenReturn(10d).thenReturn(20d);
+//        when(resultSet.getString("description")).thenReturn("description1").thenReturn("description2");
+//        when(resultSet.getBoolean("isDeleted")).thenReturn(false).thenReturn(false);
+//
+//        List<Periodical> resultList = dao.getPeriodicalsByReaderId(READER_ID);
+//        assertEquals(expectedList, resultList);
+//
+//        verify(preparedStatement).setLong(1, READER_ID);
+//    }
+//
+//    @Test
+//    public void getPeriodicalsByReaderIdEmptyTest() throws SQLException {
+//        List<Periodical> expectedList = Collections.emptyList();
+//
+//        when(connection.prepareStatement(GET_PERIODICALS_BY_READER_ID)).thenReturn(preparedStatement);
+//        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(false);
+//
+//        List<Periodical> resultList = dao.getPeriodicalsByReaderId(READER_ID);
+//        assertEquals(expectedList, resultList);
+//
+//        verify(preparedStatement).setLong(1, READER_ID);
+//    }
+//
+//    @Test
+//    public void getPeriodicalsByTopicByReaderIdTest() throws SQLException {
+//        Map<Periodical, Prepayment> expectedMap = new HashMap<>();
+//        periodical1.setTopic("topic");
+//        periodical2.setTopic("topic");
+//        prepayment1.setReaderId(READER_ID);
+//        prepayment2.setReaderId(READER_ID);
+//        expectedMap.put(periodical1, prepayment1);
+//        expectedMap.put(periodical2, prepayment2);
+//
+//        when(connection.prepareStatement(GET_PERIODICAL_BY_TOPIC_BY_READER_ID)).thenReturn(preparedStatement);
+//        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
+//        when(resultSet.getLong("periodical.id")).thenReturn(PERIODICAL_ID).thenReturn(2L);
+//        when(resultSet.getString("name")).thenReturn("name1").thenReturn("name2");
+//        when(resultSet.getDouble("cost")).thenReturn(10d).thenReturn(20d);
+//        when(resultSet.getString("description")).thenReturn("description1").thenReturn("description2");
+//        when(resultSet.getLong("prepayment.id")).thenReturn(1L).thenReturn(2L);
+//        when(resultSet.getString("start_date")).thenReturn("startDate1").thenReturn("startDate2");
+//        when(resultSet.getString("due_date")).thenReturn("dueDate1").thenReturn("dueDate2");
+//        when(resultSet.getBoolean("isDeleted")).thenReturn(false).thenReturn(false);
+//
+//        Map<Periodical, Prepayment> resultMap = dao.getPeriodicalsByTopicByReaderId("topic", READER_ID);
+//        assertEquals(expectedMap, resultMap);
+//
+//        verify(preparedStatement).setLong(1, READER_ID);
+//        verify(preparedStatement).setString(2, "topic");
+//    }
+//
+//    @Test
+//    public void getPeriodicalsByTopicByReaderIdEmptyTest() throws SQLException {
+//        Map<Periodical, Prepayment> expectedMap = Collections.emptyMap();
+//
+//        when(connection.prepareStatement(GET_PERIODICAL_BY_TOPIC_BY_READER_ID)).thenReturn(preparedStatement);
+//        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(false);
+//
+//        Map<Periodical, Prepayment> resultMap = dao.getPeriodicalsByTopicByReaderId("topic", READER_ID);
+//        assertEquals(expectedMap, resultMap);
+//
+//        verify(preparedStatement).setLong(1, READER_ID);
+//        verify(preparedStatement).setString(2, "topic");
+//    }
+//
+//    @Test
+//    public void getPrepaymentsByReaderIdTest() throws SQLException {
+//        List<Prepayment> expectedList = new ArrayList<>();
+//        prepayment1.setReaderId(READER_ID);
+//        prepayment2.setReaderId(READER_ID);
+//        expectedList.add(prepayment1);
+//        expectedList.add(prepayment2);
+//
+//        when(connection.prepareStatement(GET_PREPAYMENTS_BY_READER_ID)).thenReturn(preparedStatement);
+//        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
+//        when(resultSet.getLong("id")).thenReturn(1L).thenReturn(2L);
+//        when(resultSet.getString("start_date")).thenReturn("startDate1").thenReturn("startDate2");
+//        when(resultSet.getString("due_date")).thenReturn("dueDate1").thenReturn("dueDate2");
+//        when(resultSet.getLong("periodical_id")).thenReturn(PERIODICAL_ID).thenReturn(2L);
+//
+//        List<Prepayment> resultList = dao.getPrepaymentsByReaderId(READER_ID);
+//        assertEquals(expectedList, resultList);
+//
+//        verify(preparedStatement).setLong(1, READER_ID);
+//    }
+//
+//    @Test
+//    public void getPrepaymentsByReaderIdEmptyTest() throws SQLException {
+//        List<Prepayment> expectedList = Collections.emptyList();
+//
+//        when(connection.prepareStatement(GET_PREPAYMENTS_BY_READER_ID)).thenReturn(preparedStatement);
+//        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(false);
+//        List<Prepayment> resultList = dao.getPrepaymentsByReaderId(READER_ID);
+//        assertEquals(expectedList, resultList);
+//
+//        verify(preparedStatement).setLong(1, READER_ID);
+//    }
+//
+//    @Test
+//    public void findPeriodicalByNameByReaderIdTest() throws SQLException {
+//        Map<Periodical, Prepayment> expectedMap = new HashMap<>();
+//        periodical1.setName("name");
+//        periodical2.setName("name");
+//        prepayment1.setReaderId(READER_ID);
+//        prepayment2.setReaderId(READER_ID);
+//        expectedMap.put(periodical1, prepayment1);
+//        expectedMap.put(periodical2, prepayment2);
+//
+//        when(connection.prepareStatement(FIND_PERIODICALS_BY_NAME_BY_READER_ID)).thenReturn(preparedStatement);
+//        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
+//        when(resultSet.getLong("periodical.id")).thenReturn(PERIODICAL_ID).thenReturn(2L);
+//        when(resultSet.getString("name")).thenReturn("name").thenReturn("name");
+//        when(resultSet.getString("topic")).thenReturn("topic1").thenReturn("topic2");
+//        when(resultSet.getDouble("cost")).thenReturn(10d).thenReturn(20d);
+//        when(resultSet.getString("description")).thenReturn("description1").thenReturn("description2");
+//        when(resultSet.getLong("prepayment.id")).thenReturn(1L).thenReturn(2L);
+//        when(resultSet.getString("start_date")).thenReturn("startDate1").thenReturn("startDate2");
+//        when(resultSet.getString("due_date")).thenReturn("dueDate1").thenReturn("dueDate2");
+//        when(resultSet.getBoolean("isDeleted")).thenReturn(false).thenReturn(false);
+//
+//        Map<Periodical, Prepayment> resultMap = dao.findPeriodicalsByNameByReaderId("name", READER_ID);
+//        assertEquals(expectedMap, resultMap);
+//
+//        verify(preparedStatement).setLong(1, READER_ID);
+//        verify(preparedStatement).setString(2, "%name%");
+//
+//    }
+//
+//    @Test
+//    public void findPeriodicalByNameByReaderIdEmptyTest() throws SQLException {
+//        Map<Periodical, Prepayment> expectedMap = Collections.emptyMap();
+//
+//        when(connection.prepareStatement(FIND_PERIODICALS_BY_NAME_BY_READER_ID)).thenReturn(preparedStatement);
+//        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(false);
+//
+//        Map<Periodical, Prepayment> resultMap = dao.findPeriodicalsByNameByReaderId("name", READER_ID);
+//        assertEquals(expectedMap, resultMap);
+//
+//        verify(preparedStatement).setLong(1, READER_ID);
+//        verify(preparedStatement).setString(2, "%name%");
+//
+//    }
+//
+//    @Test
+//    public void getPeriodicalsForSubscribingTest() throws SQLException {
+//        List<Periodical> expectedList = new ArrayList<>();
+//        List<Long> listOfSubscribedPeriodicals = new ArrayList<>();
+//        listOfSubscribedPeriodicals.add(PERIODICAL_ID);
+//        expectedList.add(periodical2);
+//
+//        when(connection.createStatement()).thenReturn(statement);
+//        when(statement.executeQuery(GET_PERIODICALS_FOR_SUBSCRIBING)).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(true).thenReturn(false);
+//        when(resultSet.getLong("id")).thenReturn(2L);
+//        when(resultSet.getString("name")).thenReturn("name2");
+//        when(resultSet.getString("topic")).thenReturn("topic2");
+//        when(resultSet.getDouble("cost")).thenReturn(20d);
+//        when(resultSet.getString("description")).thenReturn("description2");
+//        when(resultSet.getBoolean("isDeleted")).thenReturn(false);
+//
+//        List<Periodical> resultList = dao.getPeriodicalsForSubscribing(listOfSubscribedPeriodicals);
+//        assertEquals(expectedList, resultList);
+//    }
+//
+//    @Test
+//    public void getPeriodicalsForSubscribingEmptyTest() throws SQLException {
+//        List<Periodical> expectedList = Collections.emptyList();
+//        List<Long> listOfSubscribedPeriodicals = new ArrayList<>();
+//        listOfSubscribedPeriodicals.add(PERIODICAL_ID);
+//
+//        when(connection.createStatement()).thenReturn(statement);
+//        when(statement.executeQuery(GET_PERIODICALS_FOR_SUBSCRIBING)).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(false);
+//
+//        List<Periodical> resultList = dao.getPeriodicalsForSubscribing(listOfSubscribedPeriodicals);
+//        assertEquals(expectedList, resultList);
+//    }
+//
+//    @Test
+//    public void getPeriodicalsForSubscribingForNewReaderTest() throws SQLException {
+//        List<Periodical> expectedList = new ArrayList<>();
+//        List<Long> listOfSubscribedPeriodicals = Collections.emptyList();
+//        expectedList.add(periodical2);
+//
+//        when(connection.createStatement()).thenReturn(statement);
+//        when(statement.executeQuery(GET_PERIODICALS_FOR_SUBSCRIBING_FOR_NEW_READER)).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(true).thenReturn(false);
+//        when(resultSet.getLong("id")).thenReturn(2L);
+//        when(resultSet.getString("name")).thenReturn("name2");
+//        when(resultSet.getString("topic")).thenReturn("topic2");
+//        when(resultSet.getDouble("cost")).thenReturn(20d);
+//        when(resultSet.getString("description")).thenReturn("description2");
+//        when(resultSet.getBoolean("isDeleted")).thenReturn(false);
+//
+//        List<Periodical> resultList = dao.getPeriodicalsForSubscribing(listOfSubscribedPeriodicals);
+//        assertEquals(expectedList, resultList);
+//    }
+//
+//    @Test
+//    public void getPeriodicalsForSubscribingForNewReaderEmptyTest() throws SQLException {
+//        List<Periodical> expectedList = Collections.emptyList();
+//        List<Long> listOfSubscribedPeriodicals = Collections.emptyList();
+//
+//        when(connection.createStatement()).thenReturn(statement);
+//        when(statement.executeQuery(GET_PERIODICALS_FOR_SUBSCRIBING_FOR_NEW_READER)).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(false);
+//
+//        List<Periodical> resultList = dao.getPeriodicalsForSubscribing(listOfSubscribedPeriodicals);
+//        assertEquals(expectedList, resultList);
+//    }
+//
+//    @Test
+//    public void findPeriodicalsForSubscribingByNameTest()throws SQLException{
+//        List<Periodical> expectedList = new ArrayList<>();
+//        List<Long> listOfSubscribedPeriodicals = new ArrayList<>();
+//        listOfSubscribedPeriodicals.add(PERIODICAL_ID);
+//        periodical2.setName("name");
+//        expectedList.add(periodical2);
+//
+//        when(connection.prepareStatement(FIND_PERIODICALS_FOR_SUBSCRIBING_BY_NAME)).thenReturn(preparedStatement);
+//        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(true).thenReturn(false);
+//        when(resultSet.getLong("id")).thenReturn(2L);
+//        when(resultSet.getString("name")).thenReturn("name");
+//        when(resultSet.getString("topic")).thenReturn("topic2");
+//        when(resultSet.getDouble("cost")).thenReturn(20d);
+//        when(resultSet.getString("description")).thenReturn("description2");
+//        when(resultSet.getBoolean("isDeleted")).thenReturn(false);
+//
+//        List<Periodical> resultList = dao.findPeriodicalsForSubscribingByName(listOfSubscribedPeriodicals,"name");
+//        assertEquals(expectedList,resultList);
+//
+//        verify(preparedStatement).setString(1,"%name%");
+//    }
+//
+//    @Test
+//    public void findPeriodicalsForSubscribingByNameEmptyTest()throws SQLException{
+//        List<Periodical> expectedList = Collections.emptyList();
+//        List<Long> listOfSubscribedPeriodicals = new ArrayList<>();
+//        listOfSubscribedPeriodicals.add(PERIODICAL_ID);
+//
+//        when(connection.prepareStatement(FIND_PERIODICALS_FOR_SUBSCRIBING_BY_NAME)).thenReturn(preparedStatement);
+//        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(false);
+//        List<Periodical> resultList = dao.findPeriodicalsForSubscribingByName(listOfSubscribedPeriodicals,"name");
+//        assertEquals(expectedList,resultList);
+//
+//        verify(preparedStatement).setString(1,"%name%");
+//    }
+//
+//    @Test
+//    public void findPeriodicalsForSubscribingByNameForNewReaderTest()throws SQLException{
+//        List<Periodical> expectedList = new ArrayList<>();
+//        List<Long> listOfSubscribedPeriodicals = Collections.emptyList();
+//        periodical2.setName("name");
+//        expectedList.add(periodical2);
+//
+//        when(connection.prepareStatement(FIND_PERIODICALS_FOR_SUBSCRIBING_BY_NAME_FOR_NEW_READER)).thenReturn(preparedStatement);
+//        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(true).thenReturn(false);
+//        when(resultSet.getLong("id")).thenReturn(2L);
+//        when(resultSet.getString("name")).thenReturn("name");
+//        when(resultSet.getString("topic")).thenReturn("topic2");
+//        when(resultSet.getDouble("cost")).thenReturn(20d);
+//        when(resultSet.getString("description")).thenReturn("description2");
+//        when(resultSet.getBoolean("isDeleted")).thenReturn(false);
+//
+//        List<Periodical> resultList = dao.findPeriodicalsForSubscribingByName(listOfSubscribedPeriodicals,"name");
+//        assertEquals(expectedList,resultList);
+//
+//        verify(preparedStatement).setString(1,"%name%");
+//    }
+//
+//    @Test
+//    public void findPeriodicalsForSubscribingByNameForNewReaderEmptyTest()throws SQLException{
+//        List<Periodical> expectedList = Collections.emptyList();
+//        List<Long> listOfSubscribedPeriodicals = Collections.emptyList();
+//
+//        when(connection.prepareStatement(FIND_PERIODICALS_FOR_SUBSCRIBING_BY_NAME_FOR_NEW_READER)).thenReturn(preparedStatement);
+//        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(false);
+//
+//        List<Periodical> resultList = dao.findPeriodicalsForSubscribingByName(listOfSubscribedPeriodicals,"name");
+//        assertEquals(expectedList,resultList);
+//
+//        verify(preparedStatement).setString(1,"%name%");
+//    }
+//
+//    @Test
+//    public void getPeriodicalIdByReaderIdTest()throws SQLException{
+//        List<Long> expectedList = new ArrayList<>();
+//        expectedList.add(PERIODICAL_ID);
+//        expectedList.add(2L);
+//
+//        when(connection.prepareStatement(GET_PERIODICAL_ID_BY_READER_ID)).thenReturn(preparedStatement);
+//        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
+//        when(resultSet.getLong("periodical_id")).thenReturn(PERIODICAL_ID).thenReturn(2L);
+//
+//        List<Long> resultList = dao.getPeriodicalIdByReaderId(READER_ID);
+//        assertEquals(expectedList,resultList);
+//
+//        verify(preparedStatement).setLong(1,READER_ID);
+//    }
+//
+//    @Test
+//    public void getPeriodicalIdByReaderIdEmptyTest()throws SQLException{
+//        List<Long> expectedList = Collections.emptyList();
+//
+//        when(connection.prepareStatement(GET_PERIODICAL_ID_BY_READER_ID)).thenReturn(preparedStatement);
+//        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+//        when(resultSet.next()).thenReturn(false);
+//
+//        List<Long> resultList = dao.getPeriodicalIdByReaderId(READER_ID);
+//        assertEquals(expectedList,resultList);
+//
+//        verify(preparedStatement).setLong(1,READER_ID);
+//    }
 }

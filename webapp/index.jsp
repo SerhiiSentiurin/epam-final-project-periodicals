@@ -25,6 +25,7 @@
             <lang:print message = "index.jsp.if_u_are_not_registered"/>
         </h3>
         <form accept-charset="UTF-8" method="GET" action="/app/periodicals/periodical/watch">
+            <input type="hidden" name="page" value="1">
             <input type = "submit" style="width: 10%" value='<lang:print message = "index.jsp.button.watch_periodicals"/>'>
         </form><br><br>
 

@@ -16,33 +16,79 @@ public class PeriodicalDAO {
     private final DataSource dataSource;
 
     @SneakyThrows
-    public List<Periodical> getAllPeriodicals() {
-        String getAllPeriodicals = "SELECT * FROM periodical";
-        List<Periodical> listOfPeriodicals = new ArrayList<>();
+    public double getCountOfRowsPeriodical() {
+        String query = "SELECT COUNT(*) FROM periodical";
         try (Connection connection = dataSource.getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(getAllPeriodicals)) {
-            while (resultSet.next()) {
-                long id = resultSet.getLong("id");
-                String name = resultSet.getString("name");
-                String topic = resultSet.getString("topic");
-                double cost = resultSet.getDouble("cost");
-                String description = resultSet.getString("description");
-                boolean isDeleted = resultSet.getBoolean("isDeleted");
-                Periodical periodical = new Periodical(id, name, topic, cost, description, isDeleted);
-                listOfPeriodicals.add(periodical);
+             PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            if (resultSet.next()) {
+                return resultSet.getDouble(1);
+            }
+        }
+        return 0;
+    }
+
+    @SneakyThrows
+    public double getCountOfRowsTopic(String topic) {
+        String query = "SELECT COUNT(*) FROM periodical WHERE topic = ?";
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, topic);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getDouble(1);
+                }
+            }
+            return 0;
+        }
+    }
+
+    @SneakyThrows
+    public double getCountOfRowsName(String name) {
+        String query = "SELECT COUNT(*) FROM periodical WHERE name LIKE ?";
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, "%" + name + "%");
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getDouble(1);
+                }
+            }
+            return 0;
+        }
+    }
+
+    @SneakyThrows
+    public List<Periodical> getAllPeriodicals(int index) {
+        String getAllPeriodicals = "SELECT * FROM periodical ORDER BY id LIMIT ?, 5";
+        List<Periodical> listOfPeriodicals = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(getAllPeriodicals);
+            preparedStatement.setInt(1, index);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    long id = resultSet.getLong("id");
+                    String name = resultSet.getString("name");
+                    String topic = resultSet.getString("topic");
+                    double cost = resultSet.getDouble("cost");
+                    String description = resultSet.getString("description");
+                    boolean isDeleted = resultSet.getBoolean("isDeleted");
+                    Periodical periodical = new Periodical(id, name, topic, cost, description, isDeleted);
+                    listOfPeriodicals.add(periodical);
+                }
             }
             return listOfPeriodicals;
         }
     }
 
     @SneakyThrows
-    public List<Periodical> getPeriodicalsByTopic(String topic) {
-        String selectPeriodicalsByTopic = "SELECT * FROM periodical WHERE topic = ?";
+    public List<Periodical> getPeriodicalsByTopic(String topic, int index) {
+        String selectPeriodicalsByTopic = "SELECT * FROM periodical WHERE topic = ? LIMIT ?, 5";
         List<Periodical> periodicals = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(selectPeriodicalsByTopic)) {
             preparedStatement.setString(1, topic);
+            preparedStatement.setInt(2, index);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
                     long id = resultSet.getLong("id");
@@ -59,12 +105,13 @@ public class PeriodicalDAO {
     }
 
     @SneakyThrows
-    public List<Periodical> getPeriodicalByName(String name) {
-        String selectPeriodicalsByName = "SELECT * FROM periodical WHERE name LIKE ?";
+    public List<Periodical> getPeriodicalByName(String name, int index) {
+        String selectPeriodicalsByName = "SELECT * FROM periodical WHERE name LIKE ? LIMIT ?, 5";
         List<Periodical> periodicals = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(selectPeriodicalsByName)) {
             preparedStatement.setString(1, "%" + name + "%");
+            preparedStatement.setInt(2, index);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
                     long id = resultSet.getLong("id");
@@ -195,7 +242,7 @@ public class PeriodicalDAO {
                     double cost = resultSet.getDouble("cost");
                     String description = resultSet.getString("description");
                     boolean isDeleted = resultSet.getBoolean("isDeleted");
-                    Periodical periodical = new Periodical(perIdForSubs, name, topic, cost, description,isDeleted);
+                    Periodical periodical = new Periodical(perIdForSubs, name, topic, cost, description, isDeleted);
                     periodicalsForSubscribe.add(periodical);
                 }
             }
@@ -216,7 +263,7 @@ public class PeriodicalDAO {
                     sqlBuilder.append(") and isDeleted = false");
                 }
             }
-        }else {
+        } else {
             sqlBuilder.append(" left join periodicals ON periodicals.periodical_id = periodical.id WHERE isDeleted = false");
         }
         return sqlBuilder.toString();
@@ -259,7 +306,7 @@ public class PeriodicalDAO {
                     sqlBuilder.append(") AND isDeleted = false AND name LIKE ?");
                 }
             }
-        }else {
+        } else {
             sqlBuilder.append(" LEFT JOIN periodicals ON periodicals.periodical_id = periodical.id WHERE name LIKE ? AND isDeleted = false");
         }
         return sqlBuilder.toString();

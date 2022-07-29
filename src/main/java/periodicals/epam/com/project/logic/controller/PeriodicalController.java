@@ -21,17 +21,22 @@ public class PeriodicalController {
 
 
     public ModelAndView getAllPeriodicals(HttpServletRequest request) {
-        List<Periodical> allPeriodical = periodicalService.getAllPeriodicals();
+        int page = Integer.parseInt(request.getParameter("page"));
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setView("/periodical/watchPeriodical.jsp");
-        modelAndView.addAttribute("periodicals", allPeriodical);
+        modelAndView.addAttribute("periodicals", periodicalService.getAllPeriodicals(page));
+        modelAndView.addAttribute("countOfHref", periodicalService.getCountOfHrefPeriodical());
+        modelAndView.addAttribute("page", page);
         return modelAndView;
     }
 
     public ModelAndView getPeriodicalsByTopic(HttpServletRequest request) {
         String topic = request.getParameter("topic");
+        int page = Integer.parseInt(request.getParameter("page"));
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addAttribute("periodicals", periodicalService.getPeriodicalsByTopic(topic));
+        modelAndView.addAttribute("periodicals", periodicalService.getPeriodicalsByTopic(topic, page));
+        modelAndView.addAttribute("countOfHref", periodicalService.getCountOfHrefTopic(topic));
+        modelAndView.addAttribute("page", page);
         modelAndView.addAttribute("topic", topic);
         modelAndView.setView("/periodical/watchPeriodical.jsp");
         return modelAndView;
@@ -39,8 +44,11 @@ public class PeriodicalController {
 
     public ModelAndView getPeriodicalByName(HttpServletRequest request) {
         String name = request.getParameter("name");
+        int page = Integer.parseInt(request.getParameter("page"));
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addAttribute("periodicals", periodicalService.getPeriodicalByName(name));
+        modelAndView.addAttribute("periodicals", periodicalService.getPeriodicalByName(name, page));
+        modelAndView.addAttribute("countOfHref", periodicalService.getCountOfHrefName(name));
+        modelAndView.addAttribute("page", page);
         modelAndView.addAttribute("name", name);
         modelAndView.setView("/periodical/watchPeriodical.jsp");
         return modelAndView;
@@ -48,16 +56,23 @@ public class PeriodicalController {
 
     public ModelAndView sortPeriodicalsByCost(HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView();
+        int page = Integer.parseInt(request.getParameter("page"));
         String topic = request.getParameter("topic");
         String name = request.getParameter("name");
         List<Periodical> sortedPeriodicals = null;
         if (topic.isEmpty() && name.isEmpty()) {
-            sortedPeriodicals = periodicalService.sortPeriodicalsByCost();
+            sortedPeriodicals = periodicalService.sortPeriodicalsByCost(page);
+            modelAndView.addAttribute("countOfHref", periodicalService.getCountOfHrefPeriodical());
+            modelAndView.addAttribute("page", page);
         } else if (name.isEmpty()) {
-            sortedPeriodicals = periodicalService.sortPeriodicalsByCostByTopic(topic);
+            sortedPeriodicals = periodicalService.sortPeriodicalsByCostByTopic(topic, page);
+            modelAndView.addAttribute("countOfHref", periodicalService.getCountOfHrefTopic(topic));
+            modelAndView.addAttribute("page", page);
             modelAndView.addAttribute("topic", topic);
         } else {
-            sortedPeriodicals = periodicalService.sortPeriodicalsByCostByName(name);
+            sortedPeriodicals = periodicalService.sortPeriodicalsByCostByName(name, page);
+            modelAndView.addAttribute("countOfHref", periodicalService.getCountOfHrefName(name));
+            modelAndView.addAttribute("page", page);
             modelAndView.addAttribute("name", name);
         }
         modelAndView.addAttribute("periodicals", sortedPeriodicals);
@@ -67,16 +82,23 @@ public class PeriodicalController {
 
     public ModelAndView reversedSortPeriodicalsByCost(HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView();
+        int page = Integer.parseInt(request.getParameter("page"));
         String topic = request.getParameter("topic");
         String name = request.getParameter("name");
         List<Periodical> sortedPeriodicals;
         if (topic.isEmpty() && name.isEmpty()) {
-            sortedPeriodicals = periodicalService.reversedSortPeriodicalsByCost();
+            sortedPeriodicals = periodicalService.reversedSortPeriodicalsByCost(page);
+            modelAndView.addAttribute("countOfHref", periodicalService.getCountOfHrefPeriodical());
+            modelAndView.addAttribute("page", page);
         } else if (name.isEmpty()) {
-            sortedPeriodicals = periodicalService.reversedSortPeriodicalsByCostByTopic(topic);
+            sortedPeriodicals = periodicalService.reversedSortPeriodicalsByCostByTopic(topic, page);
+            modelAndView.addAttribute("countOfHref", periodicalService.getCountOfHrefTopic(topic));
+            modelAndView.addAttribute("page", page);
             modelAndView.addAttribute("topic", topic);
         } else {
-            sortedPeriodicals = periodicalService.reversedSortPeriodicalsByCostByName(name);
+            sortedPeriodicals = periodicalService.reversedSortPeriodicalsByCostByName(name, page);
+            modelAndView.addAttribute("countOfHref", periodicalService.getCountOfHrefName(name));
+            modelAndView.addAttribute("page", page);
             modelAndView.addAttribute("name", name);
         }
         modelAndView.addAttribute("periodicals", sortedPeriodicals);
@@ -86,16 +108,23 @@ public class PeriodicalController {
 
     public ModelAndView sortPeriodicalsByName(HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView();
+        int page = Integer.parseInt(request.getParameter("page"));
         String topic = request.getParameter("topic");
         String name = request.getParameter("name");
         List<Periodical> sortedPeriodicals;
         if (topic.isEmpty() && name.isEmpty()) {
-            sortedPeriodicals = periodicalService.sortPeriodicalsByName();
+            sortedPeriodicals = periodicalService.sortPeriodicalsByName(page);
+            modelAndView.addAttribute("countOfHref", periodicalService.getCountOfHrefPeriodical());
+            modelAndView.addAttribute("page", page);
         } else if (name.isEmpty()) {
-            sortedPeriodicals = periodicalService.sortPeriodicalsByNameByTopic(topic);
+            sortedPeriodicals = periodicalService.sortPeriodicalsByNameByTopic(topic, page);
+            modelAndView.addAttribute("countOfHref", periodicalService.getCountOfHrefTopic(topic));
+            modelAndView.addAttribute("page", page);
             modelAndView.addAttribute("topic", topic);
         } else {
-            sortedPeriodicals = periodicalService.sortPeriodicalsByNameByName(name);
+            sortedPeriodicals = periodicalService.sortPeriodicalsByNameByName(name, page);
+            modelAndView.addAttribute("countOfHref", periodicalService.getCountOfHrefName(name));
+            modelAndView.addAttribute("page", page);
             modelAndView.addAttribute("name", name);
         }
         modelAndView.addAttribute("periodicals", sortedPeriodicals);
@@ -105,16 +134,23 @@ public class PeriodicalController {
 
     public ModelAndView reversedSortPeriodicalsByName(HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView();
+        int page = Integer.parseInt(request.getParameter("page"));
         String topic = request.getParameter("topic");
         String name = request.getParameter("name");
         List<Periodical> sortedPeriodicals;
         if (topic.isEmpty() && name.isEmpty()) {
-            sortedPeriodicals = periodicalService.reversedSortPeriodicalsByName();
+            sortedPeriodicals = periodicalService.reversedSortPeriodicalsByName(page);
+            modelAndView.addAttribute("countOfHref", periodicalService.getCountOfHrefPeriodical());
+            modelAndView.addAttribute("page", page);
         } else if (name.isEmpty()) {
-            sortedPeriodicals = periodicalService.reversedSortPeriodicalsByNameByTopic(topic);
+            sortedPeriodicals = periodicalService.reversedSortPeriodicalsByNameByTopic(topic, page);
+            modelAndView.addAttribute("countOfHref", periodicalService.getCountOfHrefTopic(topic));
+            modelAndView.addAttribute("page", page);
             modelAndView.addAttribute("topic", topic);
         } else {
-            sortedPeriodicals = periodicalService.reversedSortPeriodicalsByNameByName(name);
+            sortedPeriodicals = periodicalService.reversedSortPeriodicalsByNameByName(name, page);
+            modelAndView.addAttribute("countOfHref", periodicalService.getCountOfHrefName(name));
+            modelAndView.addAttribute("page", page);
             modelAndView.addAttribute("name", name);
         }
         modelAndView.addAttribute("periodicals", sortedPeriodicals);
